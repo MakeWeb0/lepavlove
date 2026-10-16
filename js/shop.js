@@ -2,17 +2,18 @@
    Le Pavlove — Tienda online (pedido para recoger en tienda)
    El pedido se envía por WhatsApp y se paga al recoger.
    ========================================================= */
-(() => {
+(window.LP_READY || Promise.resolve()).then(() => {
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hasGsap = !!window.gsap;
-  const WA = '34642882027';
+  const LPD = (window.LP && window.LP.data) || null;
+  const WA = (LPD && LPD.site.whatsapp) || '34642882027';
   const STORE_KEY = 'lp-cart';
 
   /* ---------- Catálogo (precios de la carta) ---------- */
   // Alérgenos según los ingredientes de la carta: revisar con el obrador antes de publicar.
-  const PRODUCTS = [
+  const BUILTIN = [
     { id: 'pav-personal', cat: 'pavlovas', name: 'Pavlova personal', size: '8 cm', img: 'assets/img/pavlova.webp', png: true,
       desc: 'Merengue crujiente con almendra y nuez, dulce de leche, crema de vainilla de Madagascar y fresas.',
       allergens: ['Huevo', 'Leche', 'Frutos secos'],
@@ -50,6 +51,8 @@
       allergens: [],
       variants: [{ label: '250 g', price: 12 }, { label: '454 g', price: 16 }, { label: '2,5 kg', price: 74 }] },
   ];
+  // El panel de administración guarda el catálogo en data/content.json
+  const PRODUCTS = (LPD && LPD.shop && LPD.shop.products ? LPD.shop.products.filter((p) => !p.hidden).map((p) => ({ ...p, png: p.art, extra: p.extra || undefined })) : BUILTIN);
 
   const eur = (n) => n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
   const byId = (id) => PRODUCTS.find((p) => p.id === id);
@@ -289,9 +292,16 @@
   }
 
   /* ---------- Recogida: días y horas de apertura ---------- */
-  // Martes a viernes y domingo, 17:00–21:00 (según Google). Última recogida 20:30.
-  const OPEN_DAYS = [0, 2, 3, 4, 5]; // 0 = domingo
-  const SLOTS = ['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30'];
+  // Días y franjas salen del horario del panel (última recogida: 30 min antes de cerrar)
+  const HOURS = (LPD && LPD.hours) || [0, 1, 1, 1, 1, 0, 1].map((o, i) => ({ open: !!o, from: '17:00', to: '21:00' }));
+  const toMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + (m || 0); };
+  const slotsFor = (dow) => { // dow: 0 = domingo
+    const h = HOURS[(dow + 6) % 7];
+    if (!h || !h.open) return [];
+    const out = [];
+    for (let m = toMin(h.from); m <= toMin(h.to) - 30; m += 30) out.push(`${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
+    return out;
+  };
   const LEAD_MIN = 90; // margen mínimo para preparar el pedido
   const fDay = $('#fDay');
   const fTime = $('#fTime');
@@ -299,7 +309,7 @@
 
   function availableSlots(date) {
     const now = new Date();
-    return SLOTS.filter((s) => {
+    return slotsFor(date.getDay()).filter((s) => {
       const [h, m] = s.split(':').map(Number);
       const t = new Date(date); t.setHours(h, m, 0, 0);
       return t - now >= LEAD_MIN * 60000;
@@ -311,7 +321,7 @@
     const d = new Date(); d.setHours(0, 0, 0, 0);
     for (let i = 0; opts.length < 10 && i < 21; i++) {
       const day = new Date(d); day.setDate(d.getDate() + i);
-      if (!OPEN_DAYS.includes(day.getDay()) || !availableSlots(day).length) continue;
+      if (!availableSlots(day).length) continue;
       const iso = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
       const label = (i === 0 ? 'Hoy, ' : i === 1 ? 'Mañana, ' : '') + dayLabel(day);
       opts.push(`<option value="${iso}">${label.charAt(0).toUpperCase() + label.slice(1)}</option>`);
@@ -395,4 +405,4 @@
     gsap.from('.info-card', { y: 40, autoAlpha: 0, duration: 1, stagger: 0.1, ease: 'expo.out', scrollTrigger: { trigger: '.shop-info', start: 'top 85%' } });
     gsap.from('.filter', { y: 16, autoAlpha: 0, duration: 0.8, stagger: 0.05, ease: 'expo.out', scrollTrigger: { trigger: '.filters', start: 'top 90%' } });
   }
-})();
+});

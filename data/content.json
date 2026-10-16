@@ -1,0 +1,290 @@
+{
+  "version": 1,
+  "site": {
+    "phone": "642 882 027",
+    "whatsapp": "34642882027",
+    "email": "info@lepavlove.com",
+    "instagram": "lepavlove",
+    "street": "Carrer Josep Maria Buck, 55",
+    "city": "03201 Elche, Alicante",
+    "mapsUrl": "https://maps.app.goo.gl/eZszqWZ8YEziPhKTA",
+    "reviewsUrl": "https://share.google/fdnWvrtNohnFC3MDX",
+    "waMessage": "Hola Le Pavlove, quiero hacer un pedido",
+    "quote": "“Te ves mejor con esto *en la mano.*”",
+    "footerTitle": "Una pavlova no se *explica, se prueba.*"
+  },
+  "notice": { "on": false, "text": "" },
+  "hours": [
+    { "day": "Lunes", "open": false, "from": "17:00", "to": "21:00" },
+    { "day": "Martes", "open": true, "from": "17:00", "to": "21:00" },
+    { "day": "Miércoles", "open": true, "from": "17:00", "to": "21:00" },
+    { "day": "Jueves", "open": true, "from": "17:00", "to": "21:00" },
+    { "day": "Viernes", "open": true, "from": "17:00", "to": "21:00" },
+    { "day": "Sábado", "open": false, "from": "17:00", "to": "21:00" },
+    { "day": "Domingo", "open": true, "from": "17:00", "to": "21:00" }
+  ],
+  "visit": { "title": "¿Se te antoja? *Te esperamos.*" },
+  "hero": {
+    "kicker": "Pavlovas, café y matcha en Elche",
+    "line1": "Un antojo fino,",
+    "line2": "*hecho para*",
+    "line3": "*provocar.*",
+    "more": "Desliza para conocer nuestra historia",
+    "cta1": "Ver la carta",
+    "cta2": "Pide online",
+    "tag": "Iced matcha fresa · *batido al momento*"
+  },
+  "about": {
+    "eyebrow": "Sobre nosotros",
+    "title": "Hola, somos *Le Pavlove.*",
+    "paragraphs": [
+      "Estamos en la calle Josep Maria Buck, en Elche, y hacemos una cosa por encima de todas: pavlovas. Merengue crujiente por fuera y tierno por dentro, nata, dulce de leche y fruta fresca encima.",
+      "Las montamos nosotros, a mano, desde la bite de un bocado hasta la grande de 21 centímetros. Y como una pavlova pide compañía, también servimos café colombiano de Quindío, matcha batido con chasen y nuestro propio helado.",
+      "Ah, y lee las cajas. Nos gusta escribirles cosas."
+    ],
+    "link": "Ven a vernos",
+    "photoMain": "assets/img/fachada.webp",
+    "photoMainAlt": "Fachada azul de Le Pavlove en Carrer Josep Maria Buck, Elche",
+    "photoInset": "assets/img/mesa.webp",
+    "photoInsetAlt": "Mesa del local con café helado, matcha y una mini pavlova",
+    "photoInsetCaption": "Una tarde cualquiera",
+    "notesLabel": "Lo que dicen nuestras cajas",
+    "notes": [
+      { "img": "assets/img/brand-vasos.webp", "alt": "Vaso de café azul y vasos transparentes de Le Pavlove", "text": "“Te ves mejor con esto en la mano.”" },
+      { "img": "assets/img/brand-bolsa.webp", "alt": "Bolsa azul de Le Pavlove", "text": "“Aquí llevo el motivo de mi buen humor.”" },
+      { "img": "assets/img/brand-cajas.webp", "alt": "Cajas azules de Le Pavlove y papel de seda", "text": "“Abrir esta caja puede causar adicción.”" }
+    ]
+  },
+  "carta": {
+    "eyebrow": "La carta",
+    "title": "Elige tu *antojo.*",
+    "intro": "Pavlovas, CupLovas, helado propio y una barra de café y matcha.",
+    "tip": "Si no sabes por dónde empezar, empieza por una *pavlova personal y un café colombiano.*",
+    "ctaOrder": "Pedir online para recoger",
+    "ctaWhats": "O escríbenos por WhatsApp",
+    "allergens": "Nuestras pavlovas frescas se elaboran con receta sin gluten, pero en el obrador trabajamos con huevo, leche, frutos secos, gluten y soja. Si tienes alguna alergia, pregúntanos antes de pedir.",
+    "categories": [
+      {
+        "id": "pavlovas", "name": "Pavlovas", "icon": "fresa", "layout": "cards",
+        "intro": "Merengue crujiente con almendra y nuez molida, dulce de leche, crema natural con vainilla de Madagascar y fresas frescas. *Receta sin gluten.*",
+        "items": [
+          { "name": "Personal", "size": "8 cm", "desc": "Es tu momento.", "price": "3,30 €", "chips": ["x4 · 12,50 €", "x6 · 18 €"], "ill": "assets/img/pavlova.webp", "photo": "", "photoOnly": false, "star": false },
+          { "name": "Bites", "size": "", "desc": "Pequeñas, delicadas y peligrosamente adictivas.", "price": "1,20 €", "chips": ["x9 · 10 €", "x16 · 15 €", "x25 · 20 €"], "ill": "assets/img/bites.webp", "photo": "assets/img/bites-caja.webp", "photoOnly": false, "star": false },
+          { "name": "Mediana", "size": "11 cm", "desc": "Ideal para compartir… o no.", "price": "7,50 €", "chips": ["x4 · 26,50 €"], "ill": "assets/img/pavlova-caja.webp", "photo": "", "photoOnly": true, "star": false },
+          { "name": "Grande", "size": "21 cm", "desc": "La que entra con presencia.", "price": "24 €", "chips": ["Para compartir"], "ill": "assets/img/grande.webp", "photo": "assets/img/pavlova-cumple.webp", "photoOnly": false, "star": false }
+        ]
+      },
+      {
+        "id": "cuplovas", "name": "CupLovas y helado", "icon": "frambuesa", "layout": "cards",
+        "intro": "CupLovas: capas que se disfrutan sin complicaciones, en vaso y listas para llevar. *Añade helado Le Pavlove por 1 €.*",
+        "items": [
+          { "name": "Tradicional", "size": "", "desc": "Pavlova triturada, dulce de leche, crema de vainilla de Madagascar y fresas.", "price": "4,50 €", "chips": [], "ill": "assets/img/cuplova.webp", "photo": "", "photoOnly": false, "star": false },
+          { "name": "Parfait", "size": "", "desc": "Yogur natural o de frutos rojos, granola artesanal, fresas y miel.", "price": "4,50 €", "chips": [], "ill": "assets/img/parfait.webp", "photo": "", "photoOnly": false, "star": false },
+          { "name": "Fresita", "size": "", "desc": "Fresas cortadas con crema natural de vainilla de Madagascar.", "price": "4,50 €", "chips": [], "ill": "assets/img/fresita.webp", "photo": "", "photoOnly": false, "star": false },
+          { "name": "Heladova", "size": "", "desc": "Helado de vainilla de Madagascar, dulce de leche argentino, mermelada de fresa y trocitos de pavlova.", "price": "desde 2 €", "chips": ["2 bolas · 2 €", "4 bolas · 3,50 €", "Batido · 6 €"], "ill": "assets/img/heladova.webp", "photo": "", "photoOnly": false, "star": true }
+        ]
+      },
+      {
+        "id": "cafe", "name": "Café", "icon": "arandano", "layout": "menu",
+        "intro": "",
+        "feature": { "img": "assets/img/cafe.webp", "title": "Café de Quindío", "text": "Colombiano, gourmet y molido para cada taza. Cambia a bebida de avena Oatly por 0,50 €." },
+        "groups": [
+          {
+            "col": 1, "title": "Caliente", "icon": "arandano", "note": "", "style": "items", "beans": null,
+            "items": [
+              { "name": "Espresso", "note": "", "price": "1 €" },
+              { "name": "Espresso doble", "note": "", "price": "1,80 €" },
+              { "name": "Cortado", "note": "", "price": "1,50 €" },
+              { "name": "Americano", "note": "", "price": "1,90 €" },
+              { "name": "Café con leche", "note": "", "price": "2 €" },
+              { "name": "Cappuccino", "note": "cacao o canela", "price": "2,50 €" },
+              { "name": "Belmonte", "note": "", "price": "3 €" },
+              { "name": "Macchiato de Nutella", "note": "", "price": "3 €" },
+              { "name": "Affogato", "note": "con helado Le Pavlove", "price": "3,50 €" },
+              { "name": "Espresso Disaronno", "note": "", "price": "3,50 €" }
+            ]
+          },
+          {
+            "col": 2, "title": "Con hielo", "icon": "hoja", "note": "", "style": "items",
+            "beans": { "title": "Llévate el café a casa", "chips": ["250 g · 12 €", "454 g · 16 €", "2,5 kg · 74 €"] },
+            "items": [
+              { "name": "Café iced", "note": "", "price": "2 €" },
+              { "name": "Iced latte", "note": "", "price": "2,50 €" },
+              { "name": "Chocolatada Le Pavlove", "note": "", "price": "3 €" },
+              { "name": "Iced latte Disaronno", "note": "", "price": "4,50 €" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "matcha", "name": "Matcha y té", "icon": "hoja", "layout": "menu",
+        "intro": "",
+        "feature": { "img": "assets/img/proc-final.webp", "title": "Matcha batido a mano", "text": "Matcha ceremonial, tamizado y batido con chasen en el momento. Nuestro favorito: el iced matcha de fresa." },
+        "groups": [
+          {
+            "col": 1, "title": "Matcha caliente", "icon": "hoja", "note": "", "style": "items", "beans": null,
+            "items": [
+              { "name": "Matcha clásico", "note": "", "price": "2,50 €", "img": "assets/img/proc-batir.webp", "png": false },
+              { "name": "Matcha latte", "note": "", "price": "3 €" },
+              { "name": "Matcha latte fresa", "note": "", "price": "3,50 €" }
+            ]
+          },
+          {
+            "col": 1, "title": "Matcha frío", "icon": "fresa", "note": "", "style": "items", "beans": null,
+            "items": [
+              { "name": "Iced matcha latte fresa", "note": "", "price": "4 €" },
+              { "name": "Iced matcha latte frutal", "note": "", "price": "4 €", "img": "assets/img/matcha.webp", "png": true },
+              { "name": "Iced matcha leche condensada", "note": "", "price": "4 €" },
+              { "name": "Coconut matcha latte", "note": "", "price": "4,50 €" }
+            ]
+          },
+          {
+            "col": 2, "title": "Tés e infusiones", "icon": "flor", "note": "", "style": "items", "beans": null,
+            "items": [
+              { "name": "Té negro chai", "note": "", "price": "1,50 €" },
+              { "name": "Té negro vainilla", "note": "", "price": "1,50 €" },
+              { "name": "Té verde limón", "note": "", "price": "1,50 €" },
+              { "name": "Manzanilla", "note": "", "price": "1,50 €" },
+              { "name": "Infusión cereza y coco", "note": "", "price": "1,50 €" },
+              { "name": "Infusión dulce menta", "note": "", "price": "1,50 €" },
+              { "name": "Chai latte", "note": "", "price": "2 €" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "extras", "name": "Extras", "icon": "flor", "layout": "menu",
+        "intro": "",
+        "feature": null,
+        "groups": [
+          {
+            "col": 1, "title": "Toppings", "icon": "fresa", "note": "Para terminar tu pavlova, CupLova o helado a tu manera.", "style": "toppings", "beans": null,
+            "items": [
+              { "name": "Leche condensada", "note": "", "price": "1 €" },
+              { "name": "Dulce de leche", "note": "", "price": "1 €" },
+              { "name": "Caramelo salado", "note": "", "price": "1 €" },
+              { "name": "Nata montada natural", "note": "", "price": "1 €" },
+              { "name": "Chocolate negro Callebaut", "note": "", "price": "1,50 €" },
+              { "name": "Chocolate blanco Callebaut", "note": "", "price": "1,50 €" },
+              { "name": "Nutella", "note": "", "price": "1,50 €" },
+              { "name": "Mermelada natural de fresa", "note": "", "price": "1,50 €" },
+              { "name": "Mermelada de temporada", "note": "", "price": "1,50 €" },
+              { "name": "Granola artesanal", "note": "", "price": "1,50 €" },
+              { "name": "Piruline", "note": "", "price": "1,50 €" },
+              { "name": "Helado Le Pavlove", "note": "", "price": "2 €" },
+              { "name": "Kataifi tostado", "note": "", "price": "2 €" }
+            ]
+          },
+          {
+            "col": 2, "title": "Bebidas", "icon": "arandano", "note": "", "style": "items", "beans": null,
+            "items": [
+              { "name": "Zumo de naranja natural", "note": "", "price": "3 €" },
+              { "name": "Agua 50 cl", "note": "", "price": "1,50 €" },
+              { "name": "Vichy Catalán", "note": "", "price": "2 €" },
+              { "name": "Coca-Cola · Zero", "note": "", "price": "1,50 €" },
+              { "name": "Pony Malta", "note": "", "price": "2 €" },
+              { "name": "Aquarius", "note": "", "price": "2 €" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "gallery": {
+    "title": "Spoiler: vas a querer *más de una.*",
+    "hint": "Arrastra para girar",
+    "images": [
+      { "img": "assets/img/pavlova-cumple.webp", "alt": "Pavlova de celebración con fresas y pan de oro" },
+      { "img": "assets/img/brand-vasos.webp", "alt": "Vasos de Le Pavlove y mini pavlova de frutos rojos" },
+      { "img": "assets/img/fresas.webp", "alt": "Fresas frescas con el logo de Le Pavlove" },
+      { "img": "assets/img/pavlova-corte.webp", "alt": "Corte de pavlova con merengue, nata y fresas" },
+      { "img": "assets/img/brand-cajas.webp", "alt": "Cajas azules y papel de seda de Le Pavlove" },
+      { "img": "assets/img/bites-caja.webp", "alt": "Caja de bites con fresa" },
+      { "img": "assets/img/cafe.webp", "alt": "Café colombiano recién servido" },
+      { "img": "assets/img/pavlova-caja.webp", "alt": "Pavlova mediana en su caja" },
+      { "img": "assets/img/brand-caja-larga.webp", "alt": "Caja larga y servilleta de Le Pavlove" },
+      { "img": "assets/img/proc-final.webp", "alt": "Iced matcha latte de fresa en vaso Le Pavlove" },
+      { "img": "assets/img/brand-antojo.webp", "alt": "Ilustración de pavlova de Le Pavlove" },
+      { "img": "assets/img/mesa.webp", "alt": "Mesa con café helado, matcha y mini pavlova" }
+    ]
+  },
+  "process": {
+    "eyebrow": "Cómo trabajamos",
+    "title": "Así nace *una pavlova.*",
+    "intro": "Pocos ingredientes, bien elegidos y montados a mano. Estos son los cuatro pasos que sigue cada pieza antes de llegar al mostrador.",
+    "hint": "Desliza para verlo",
+    "steps": [
+      { "img": "assets/img/pavlova-corte.webp", "alt": "Pavlova cortada mostrando el merengue", "icon": "flor", "title": "El merengue", "text": "Merengue francés con almendra y nuez molida, horneado despacio para que cruja por fuera y quede tierno por dentro." },
+      { "img": "assets/img/bites-caja.webp", "alt": "Bites de pavlova con crema", "icon": "hoja", "title": "La crema", "text": "Nata natural con vainilla de Madagascar y mascarpone, sobre un corazón de dulce de leche o Nutella." },
+      { "img": "assets/img/pavlova-cumple.webp", "alt": "Pavlova con fresas colocadas en círculo", "icon": "fresa", "title": "La fruta", "text": "Fresas frescas cortadas y colocadas una a una, como los pétalos de una flor." },
+      { "img": "assets/img/proc-batir.webp", "alt": "Matcha batido a mano con chasen", "icon": "arandano", "title": "La barra", "text": "Matcha tamizado y batido con chasen, mermelada de fresa natural y café de Quindío molido al momento." }
+    ],
+    "ctaTitle": "Lo mejor pasa *en directo.*",
+    "ctaText": "Pavlovas recién montadas, encargos especiales y novedades de la barra, cada semana en nuestras redes.",
+    "ctaFollow": "Síguenos",
+    "ctaWrite": "Escríbenos"
+  },
+  "reviews": {
+    "eyebrow": "Opiniones",
+    "title": "Lo que provoca *una pavlova.*",
+    "sub": "Nos lo escriben en Google. Nosotros lo imprimiríamos en servilletas.",
+    "score": "5,0",
+    "scoreText": "52 opiniones en Google",
+    "button": "Leer todas en Google",
+    "items": [
+      { "name": "Ester G.", "text": "Crujiente por fuera, suave y ligera por dentro, con un equilibrio perfecto de dulzor. La mejor que he probado.", "big": true },
+      { "name": "Luisa A.", "text": "Pet friendly, con galletas para los perritos. De los pocos sitios donde he encontrado hojicha y matcha.", "big": false },
+      { "name": "Lina P.", "text": "Las pavlovas, las mejores de Elche.", "big": true },
+      { "name": "Antonieta A.", "text": "Como dice en la tarjeta, fue amor dulce y puro: un bocado de ilusión muy cerquita de nosotros.", "big": false },
+      { "name": "Moly M.", "text": "Probé una mini pavlova y una milhoja: la pavlova está tremenda. Una marca muy bien cuidada.", "big": false },
+      { "name": "Alexandra D.", "text": "Primera vez que pruebo pavlovas ¡y me han encantado! El sitio es muy cálido y el servicio, de diez.", "big": false },
+      { "name": "Sileth P.", "text": "Nunca las había comido y quedé enamorada. Son adictivas.", "big": true },
+      { "name": "Danny V.", "text": "Todo hecho por ellos mismos y sin gluten. Me sentí en casa.", "big": false },
+      { "name": "Elisa", "text": "Café puro de Colombia, riquísimo. Todo delicioso y casero. ¡Ole a la pastelera!", "big": false }
+    ]
+  },
+  "shop": {
+    "eyebrow": "Pedidos para recoger en tienda",
+    "title": "Elige, *encarga y recoge.*",
+    "lead": "Envíanos el pedido por WhatsApp y recógelo en {street}. Lo pagas al recogerlo.",
+    "products": [
+      { "id": "pav-personal", "cat": "pavlovas", "name": "Pavlova personal", "size": "8 cm", "img": "assets/img/pavlova.webp", "art": true, "hidden": false,
+        "desc": "Merengue crujiente con almendra y nuez, dulce de leche, crema de vainilla de Madagascar y fresas.",
+        "allergens": ["Huevo", "Leche", "Frutos secos"],
+        "variants": [{ "label": "1 ud", "price": 3.3 }, { "label": "Caja de 4", "price": 12.5 }, { "label": "Caja de 6", "price": 18 }], "extra": null },
+      { "id": "pav-bites", "cat": "pavlovas", "name": "Bites", "size": "de un bocado", "img": "assets/img/bites.webp", "art": true, "hidden": false,
+        "desc": "Pequeñas, delicadas y peligrosamente adictivas.",
+        "allergens": ["Huevo", "Leche", "Frutos secos"],
+        "variants": [{ "label": "1 ud", "price": 1.2 }, { "label": "Caja de 9", "price": 10 }, { "label": "Caja de 16", "price": 15 }, { "label": "Caja de 25", "price": 20 }], "extra": null },
+      { "id": "pav-mediana", "cat": "pavlovas", "name": "Pavlova mediana", "size": "11 cm", "img": "assets/img/pavlova-caja.webp", "art": false, "hidden": false,
+        "desc": "Ideal para compartir… o no.",
+        "allergens": ["Huevo", "Leche", "Frutos secos"],
+        "variants": [{ "label": "1 ud", "price": 7.5 }, { "label": "Caja de 4", "price": 26.5 }], "extra": null },
+      { "id": "pav-grande", "cat": "pavlovas", "name": "Pavlova grande", "size": "21 cm", "img": "assets/img/grande.webp", "art": true, "hidden": false,
+        "desc": "La que entra con presencia. Para el centro de la mesa.",
+        "allergens": ["Huevo", "Leche", "Frutos secos"],
+        "variants": [{ "label": "1 ud", "price": 24 }], "extra": null },
+      { "id": "cup-tradicional", "cat": "cuplovas", "name": "CupLova tradicional", "size": "en vaso", "img": "assets/img/cuplova.webp", "art": true, "hidden": false,
+        "desc": "Pavlova triturada, dulce de leche, crema de vainilla de Madagascar y fresas.",
+        "allergens": ["Huevo", "Leche", "Frutos secos"],
+        "variants": [{ "label": "Vaso", "price": 4.5 }], "extra": { "label": "Con helado Le Pavlove", "price": 1 } },
+      { "id": "cup-parfait", "cat": "cuplovas", "name": "CupLova parfait", "size": "en vaso", "img": "assets/img/parfait.webp", "art": true, "hidden": false,
+        "desc": "Yogur natural o de frutos rojos, granola artesanal, fresas y miel.",
+        "allergens": ["Leche", "Gluten (granola)", "Frutos secos"],
+        "variants": [{ "label": "Vaso", "price": 4.5 }], "extra": { "label": "Con helado Le Pavlove", "price": 1 } },
+      { "id": "cup-fresita", "cat": "cuplovas", "name": "CupLova fresita", "size": "en vaso", "img": "assets/img/fresita.webp", "art": true, "hidden": false,
+        "desc": "Fresas cortadas con crema natural de vainilla de Madagascar.",
+        "allergens": ["Leche"],
+        "variants": [{ "label": "Vaso", "price": 4.5 }], "extra": { "label": "Con helado Le Pavlove", "price": 1 } },
+      { "id": "heladova", "cat": "helado", "name": "Heladova", "size": "helado artesano", "img": "assets/img/heladova.webp", "art": true, "hidden": false,
+        "desc": "Vainilla de Madagascar, dulce de leche argentino, mermelada de fresa y trocitos de pavlova.",
+        "allergens": ["Leche", "Huevo", "Frutos secos"],
+        "variants": [{ "label": "2 bolas", "price": 2 }, { "label": "4 bolas", "price": 3.5 }, { "label": "Batido 355 ml", "price": 6 }], "extra": null },
+      { "id": "cafe-grano", "cat": "cafe", "name": "Café de Quindío en grano", "size": "Colombia, gourmet", "img": "assets/img/cafe.webp", "art": false, "hidden": false,
+        "desc": "El mismo café colombiano que servimos en la barra, para llevártelo a casa.",
+        "allergens": [],
+        "variants": [{ "label": "250 g", "price": 12 }, { "label": "454 g", "price": 16 }, { "label": "2,5 kg", "price": 74 }], "extra": null }
+    ]
+  },
+  "uploads": []
+}
