@@ -1,7 +1,7 @@
 /* =========================================================
    Le Pavlove Patisserie — interacción y animaciones GSAP
    ========================================================= */
-(() => {
+(window.LP_READY || Promise.resolve()).then(() => {
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -9,19 +9,20 @@
 
   /* ---------- Funciones que no dependen de GSAP ---------- */
 
-  // Horario: resalta el día de hoy y dice si está abierto
+  // Horario: resalta el día de hoy y dice si está abierto (las horas salen de cada fila)
   (() => {
     const rows = $$('.hours > div');
     if (!rows.length) return;
     const now = new Date();
-    const idx = (now.getDay() + 6) % 7; // lunes = 0
-    const row = rows[idx];
+    const row = rows[(now.getDay() + 6) % 7]; // lunes = 0
     row.classList.add('is-today');
-    const open = !/cerrado/i.test(row.querySelector('dd').textContent);
-    const mins = now.getHours() * 60 + now.getMinutes();
+    const toMin = (t) => { const [h, m] = (t || '').split(':').map(Number); return h * 60 + (m || 0); };
+    const from = row.dataset.open;
+    const to = row.dataset.close;
     const out = $('#today');
+    const mins = now.getHours() * 60 + now.getMinutes();
     out.hidden = false;
-    out.textContent = open && mins >= 17 * 60 && mins < 21 * 60 ? 'Ahora estamos abiertos.' : open && mins < 17 * 60 ? 'Hoy abrimos a las 17:00.' : 'Ahora mismo estamos cerrados.';
+    out.textContent = !from ? 'Hoy estamos cerrados.' : mins >= toMin(from) && mins < toMin(to) ? 'Ahora estamos abiertos.' : mins < toMin(from) ? `Hoy abrimos a las ${from}.` : 'Ahora mismo estamos cerrados.';
   })();
 
   // Mapa: solo se carga (y con él las cookies de Google) si se pide
@@ -82,7 +83,7 @@
   const goTo = (hash) => {
     const el = $(hash);
     if (!el) return;
-    lenis ? lenis.scrollTo(el, { duration: 1.5 }) : el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    lenis ? lenis.scrollTo(el, window.LP && window.LP.preview ? { immediate: true } : { duration: 1.5 }) : el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
     el.setAttribute('tabindex', '-1');
     el.focus({ preventScroll: true });
   };
@@ -142,14 +143,15 @@
   document.fonts.ready.then(() => {
     if (reduce) { loader && loader.remove(); start(); return; }
     if (seen || !loader) { loader && loader.remove(); heroIntro(); start(); return; }
+    // Primero brota la flor, se cierra, y solo entonces aparece el logo (nunca a la vez)
     gsap.timeline({ onComplete: () => loader.remove() })
-      .fromTo('.loader__flor', { scale: 0, rotate: -160 }, { scale: 1, rotate: 0, duration: 0.8, ease })
-      .to('.loader__logo', { opacity: 1, duration: 0.5, ease }, 0.3)
-      .to('.loader__flor', { scale: 6, opacity: 0, duration: 0.7, ease: 'expo.in' }, 0.6)
-      .to('.loader__logo', { opacity: 0, duration: 0.3 }, 0.85)
-      .fromTo(loader, { clipPath: 'inset(0% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.8, ease: 'expo.inOut' }, 0.95)
-      .add(heroIntro(), 1.15)
-      .add(start, 1.3);
+      .fromTo('.loader__flor', { scale: 0, rotate: -160 }, { scale: 1, rotate: 0, duration: 0.65, ease })
+      .to('.loader__flor', { scale: 0, rotate: 90, duration: 0.4, ease: 'power3.in' }, 0.7)
+      .fromTo('.loader__logo', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease }, 1.2)
+      .to('.loader__logo', { opacity: 0, duration: 0.3 }, 1.95)
+      .fromTo(loader, { clipPath: 'inset(0% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.8, ease: 'expo.inOut' }, 2.0)
+      .add(heroIntro(), 2.2)
+      .add(start, 2.35);
   });
 
   if (!reduce && hero) {
@@ -189,6 +191,7 @@
   const bl = $$('.burger__line');
   const outside = [$('main'), $('.footer'), $('.wa-float'), $('.nav__logo'), $('.nav__cta'), $('.nav__cart'), $('.cart-fab')];
   gsap.set('.menu__txt', { yPercent: 110 });
+  gsap.set('.menu__link, .menu__foot', { '--ul': 0 });
 
   const menuTl = gsap.timeline({ paused: true, defaults: { ease: 'expo.inOut' } })
     .set(menu, { visibility: 'visible' })
@@ -201,6 +204,8 @@
     .from('.menu__quote', { y: 20, autoAlpha: 0, duration: 0.9, ease: 'power3.out' }, 0.8)
     .to('.menu__txt', { yPercent: 0, duration: 1.1, stagger: 0.08, ease }, 0.4)
     .from('.menu__num', { autoAlpha: 0, x: -10, duration: 0.7, stagger: 0.08, ease: 'power2.out' }, 0.55)
+    .to('.menu__link', { '--ul': 1, duration: 1, stagger: 0.08, ease: 'power3.out' }, 0.95)
+    .to('.menu__foot', { '--ul': 1, duration: 1, ease: 'power3.out' }, 1.15)
     .from('.menu__frame', { scale: 0.6, rotate: -8, autoAlpha: 0, duration: 1.2, ease }, 0.45)
     .from('.menu__flor', { rotate: -140, scale: 0.4, autoAlpha: 0, duration: 1.6, ease }, 0.35)
     .from('.menu__foot p', { y: 22, autoAlpha: 0, duration: 0.8, stagger: 0.06, ease: 'power3.out' }, 0.7);
@@ -596,4 +601,4 @@
   }
 
   addEventListener('load', () => ScrollTrigger.refresh());
-})();
+});
