@@ -572,6 +572,7 @@
     const res = await api(cfg, `contents/${encPath(path)}`, { method: 'PUT', body: JSON.stringify({ message, content: b64, branch: cfg.branch, ...(sha ? { sha } : {}) }) });
     if (!res.ok) throw new Error(await ghError(res));
   }
+  const netMsg = (e) => (e instanceof TypeError ? 'No se pudo contactar con GitHub (api.github.com). Revisa tu conexión y desactiva bloqueadores de anuncios, VPN o filtros de red; prueba en una ventana de incógnito.' : (e && e.message) || 'No se pudo publicar. Inténtalo de nuevo.');
   const b64 = (str) => btoa(unescape(encodeURIComponent(str)));
 
   function connectModal() {
@@ -598,7 +599,7 @@
       if (r.dataset.r === 'x') { closeModal(); return; }
       if (r.dataset.r === 'off') { store.del('lp-gh'); closeModal(); refreshStatus(); toast('Desconectado.'); return; }
       if (r.dataset.r === 'dl') { download(); return; }
-      const cfg = { token: $('#ghTok').value.trim(), repo: $('#ghRepo').value.trim(), branch: $('#ghBr').value.trim() || 'main' };
+      const cfg = { token: $('#ghTok').value.replace(/[^A-Za-z0-9_]/g, ''), repo: $('#ghRepo').value.trim(), branch: $('#ghBr').value.trim() || 'main' };
       if (!cfg.token) { toast('Pega la clave primero.', 'err'); return; }
       r.classList.add('is-busy'); r.textContent = 'Comprobando…';
       try {
@@ -609,7 +610,7 @@
         store.set('lp-gh', JSON.stringify(cfg));
         closeModal(true); refreshStatus();
         toast('Conectado. Ya puedes publicar.', 'ok');
-      } catch (err) { toast(err.message, 'err'); r.classList.remove('is-busy'); r.textContent = 'Probar y guardar'; }
+      } catch (err) { toast(netMsg(err), 'err'); r.classList.remove('is-busy'); r.textContent = 'Probar y guardar'; }
     };
   }
   function download() {
@@ -643,7 +644,7 @@
       refreshStatus();
       toast('¡Publicado! La web se actualizará en 1-2 minutos.', 'ok');
     } catch (err) {
-      toast(err.message || 'No se pudo publicar. Inténtalo de nuevo.', 'err');
+      toast(netMsg(err), 'err');
     } finally {
       btn.classList.remove('is-busy'); btn.lastChild.textContent = 'Publicar cambios';
       refreshStatus();
