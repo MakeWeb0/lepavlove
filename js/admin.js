@@ -553,7 +553,7 @@
 
   /* ---------- GitHub ---------- */
   const getCfg = () => { try { const c = JSON.parse(store.get('lp-gh')); return c && c.token ? c : null; } catch (e) { return null; } };
-  const api = (cfg, path, init = {}) => fetch(`https://api.github.com/repos/${cfg.repo}/${path}`, {
+  const api = (cfg, path, init = {}) => fetch(`https://api.github.com/repos/${cfg.repo.replace(/^\/+|\/+$/g, '')}${path ? '/' + path : ''}`, {
     ...init,
     headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${cfg.token}`, 'X-GitHub-Api-Version': '2022-11-28', ...(init.headers || {}) },
   });
