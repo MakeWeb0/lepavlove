@@ -128,6 +128,10 @@ em { font-style: italic; }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .btn.is-busy { pointer-events: none; opacity: .8; }
 .only-small { display: none; }
+.menu-btn { display: none; width: 44px; height: 44px; flex: none; place-items: center; border-radius: 50%; border: 1.5px solid var(--royal); color: var(--royal); }
+.menu-btn svg { width: 22px; height: 22px; }
+.menu-btn:hover { background: var(--royal); color: var(--ivory); }
+.bar__top { display: contents; }
 
 /* Listas con tarjetas */
 .list { display: grid; gap: 10px; margin-bottom: 12px; }
@@ -207,13 +211,13 @@ details.it[open] > summary::before { transform: rotate(45deg); }
   .only-small { display: inline-flex; }
 }
 @media (max-width: 860px) {
-  .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-  .side { flex-direction: row; align-items: center; gap: 10px; padding: 10px 12px; overflow-x: auto; overflow-y: hidden; }
-  .side__logo { width: 96px; margin: 0; flex: none; }
-  .side__hello, .side__foot { display: none; }
-  .nav { flex-direction: row; gap: 4px; }
-  .nav button { width: auto; flex: none; padding: 8px 14px; white-space: nowrap; font-size: 15px; }
-  .nav button svg { width: 20px; height: 20px; }
+  .app { grid-template-columns: 1fr; }
+  /* Las secciones pasan a un panel lateral que se abre con el botón de menú */
+  .side { position: fixed; inset: 0 auto 0 0; z-index: 45; width: min(300px, 84vw); transform: translateX(-100%); visibility: hidden; transition: transform .5s var(--ease), visibility 0s .5s; box-shadow: 20px 0 50px -20px rgba(14, 17, 144, .6); }
+  .side.is-open { transform: none; visibility: visible; transition: transform .5s var(--ease); }
+  .scrim { position: fixed; inset: 0; z-index: 44; background: rgba(14, 17, 144, .5); backdrop-filter: blur(3px); animation: fade .3s; }
+  .menu-btn { display: inline-grid; }
+  .bar__top { display: flex; align-items: center; gap: 12px; }
   .work { height: auto; min-height: 0; overflow: hidden; }
   .app { height: 100dvh; }
   .bar { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 14px; }

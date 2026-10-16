@@ -349,6 +349,18 @@
   $('#btnClosePreview').addEventListener('click', () => $('#preview').classList.remove('is-open'));
 
   /* ---------- Navegación ---------- */
+  const side = $('#side');
+  const scrim = $('#scrim');
+  const menuBtn = $('#btnMenu');
+  const setMenu = (on) => {
+    side.classList.toggle('is-open', on);
+    scrim.hidden = !on;
+    menuBtn.setAttribute('aria-expanded', on);
+    if (on) { const c = $('[aria-current]', nav); c && c.focus(); }
+  };
+  menuBtn.addEventListener('click', () => setMenu(!side.classList.contains('is-open')));
+  scrim.addEventListener('click', () => setMenu(false));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && side.classList.contains('is-open')) setMenu(false); });
   nav.addEventListener('click', (e) => {
     const b = e.target.closest('[data-sec]');
     if (!b) return;
@@ -356,6 +368,7 @@
     store.set('lp-admin-sec', current);
     renderNav(); renderEditor();
     loadPreview();
+    setMenu(false);
   });
 
   /* ---------- Edición de campos (delegación) ---------- */
