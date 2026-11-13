@@ -942,3 +942,18 @@ body.menu-open .notice { display: none; }
 .hero + .about, .reviews + .franchise, .page-hero + .shop, .shop + .shop-info { margin-top: -1px; }
 /* En el pie el monograma se ve un poco más */
 .footer { background-image: url("../assets/img/marca/monograma-pie.svg"); }
+
+/* Menú: todo cabe en la pantalla, sin scroll interno (los tamaños se ajustan a la altura) */
+.menu__inner { overflow: hidden; padding-top: clamp(84px, 13vh, 120px); padding-bottom: clamp(18px, 4vh, 36px); row-gap: clamp(10px, 2.4vh, 24px); }
+.menu__txt { font-size: min(5.6vw, 7.2vh, 88px); }
+.menu__link { padding: clamp(3px, 1vh, 8px) 0; }
+@media (max-width: 700px) {
+  .menu__txt { font-size: min(11vw, 5.8vh, 60px); }
+  .menu__foot { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; padding-top: 16px; font-size: 14px; }
+}
+@media (max-height: 720px) { .menu__quote { display: none; } }
+@media (min-width: 1025px) {
+  .menu__nav { grid-column: 2; grid-row: 1 / -1; }
+  .menu__frame { width: min(22vw, 300px, 36vh); }
+  .menu__flor { width: min(34vw, 440px, 56vh); height: min(34vw, 440px, 56vh); }
+}
