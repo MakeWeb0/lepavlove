@@ -940,3 +940,5 @@ body.menu-open .notice { display: none; }
 .page-hero__ilu { -webkit-mask-image: linear-gradient(to bottom, #000 22%, transparent 44%); mask-image: linear-gradient(to bottom, #000 22%, transparent 44%); }
 /* Sin rendija clara entre dos bloques azules seguidos */
 .hero + .about, .reviews + .franchise, .page-hero + .shop, .shop + .shop-info { margin-top: -1px; }
+/* En el pie el monograma se ve un poco más */
+.footer { background-image: url("../assets/img/marca/monograma-pie.svg"); }
