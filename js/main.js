@@ -235,7 +235,6 @@
     .from('.hero__more, .hero__ctas .btn', { y: 22, autoAlpha: 0, duration: 1.1, stagger: 0.08 }, 0.45)
     .fromTo('.hero__media', { clipPath: 'inset(100% 0% 0% 0% round 999px 999px 26px 26px)' }, { clipPath: 'inset(0% 0% 0% 0% round 999px 999px 26px 26px)', duration: 1.5, ease: 'expo.inOut', clearProps: 'clipPath' }, 0.1)
     .from('.hero__ilu', { yPercent: 40, autoAlpha: 0, duration: 2 }, 0.2)
-    .from('.hero .doodle', { scale: 0, rotate: -90, duration: 1.2, stagger: 0.12, ease: 'back.out(2)' }, 0.8)
     .from('.nav', { yPercent: -100, autoAlpha: 0, duration: 1.1, clearProps: 'transform,opacity,visibility' }, 0.3));
 
   let seen = false;
