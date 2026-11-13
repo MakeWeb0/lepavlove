@@ -21,10 +21,11 @@
   const BRANCH = 'main';
   // Fotos del fotógrafo (con 3 tamaños), ilustraciones y fotos del local
   const LIB = [
+    ...['pavlova-caja', 'pavlova-personal', 'cuplova', 'matchas', 'pavlova-grande', 'iced-latte', 'parfait', 'packaging', 'bites', 'matcha-mesa', 'fresita', 'batido', 'pavlova-cumple', 'latte'].map((n) => `assets/img/p/galeria/${n}.webp`),
     ...['pavlova-personal', 'bites', 'pavlova-caja', 'pavlova-grande', 'pavlova-cumple', 'cuplova', 'cuplova-alta', 'parfait', 'parfait-fresas', 'parfait-capas', 'fresita', 'iced-latte', 'latte', 'matchas', 'matcha-latte', 'matcha-mesa', 'barra', 'batido', 'packaging'].map((n) => `assets/img/p/${n}.webp`),
     ...['pavlova', 'bites', 'grande', 'cuplova', 'parfait', 'fresita', 'heladova', 'matcha', 'fachada', 'proc-batir', 'pavlova-corte', 'cafe', 'brand-vasos', 'brand-bolsa', 'brand-cajas', 'brand-antojo'].map((n) => `assets/img/${n}.webp`),
   ];
-  const SIZED = /^assets\/img\/(p|uploads)\/[^/]+\.webp$/;
+  const SIZED = /^assets\/img\/(p|p\/galeria|uploads)\/[^/]+\.webp$/;
   const ICONS = [['flor', 'Flor de Le Pavlove'], ['frambuesa', 'Frambuesa'], ['arandano', 'Arándano'], ['hoja', 'Hoja']];
 
   /* ---------- Secciones ---------- */
@@ -39,6 +40,7 @@
     { id: 'opiniones', label: 'Opiniones', icon: 'flor', desc: 'Las reseñas que se muestran en las servilletas.', page: 'index.html', hash: '#resenas' },
     { id: 'franquicias', label: 'Franquicias', icon: 'hoja', desc: 'El bloque azul marino para captar franquiciados.', page: 'index.html', hash: '#franquicias' },
     { id: 'horario', label: 'Horario y contacto', icon: 'hoja', desc: 'Cuándo abres y cómo te encuentran.', page: 'index.html', hash: '#visitanos' },
+    { id: 'legal', label: 'Datos legales', icon: 'hoja', desc: 'Titular de la web, copyright y condiciones de compra.', page: 'aviso-legal.html', hash: '' },
     { id: 'aviso', label: 'Aviso especial', icon: 'arandano', desc: 'Un mensaje destacado para todos los clientes.', page: 'index.html', hash: '' },
   ];
 
@@ -287,6 +289,22 @@
           body: `<div class="grid">${T(`franchise.points.${i}.title`, 'Título')}${T(`franchise.points.${i}.text`, 'Texto', { area: true, rows: 2, wide: true })}</div>`,
         })).join('')}</div>${addBtn('franchise.points', 'point', 'Añadir punto')}`);
     },
+    legal() {
+      return card('Titular de la web', 'Es obligatorio que aparezcan en el aviso legal y en la política de privacidad. Pon los datos del negocio (no los de la agencia). Lo que dejes vacío sale en amarillo como pendiente.', `<div class="grid">
+        ${T('legal.holder', 'Razón social o nombre del titular', { hint: 'Ej. Le Pavlove S.L. o el nombre del autónomo.' })}${T('legal.nif', 'NIF / CIF')}
+        ${T('legal.address', 'Domicilio social', { wide: true })}
+        ${T('legal.registry', 'Datos del Registro Mercantil', { wide: true, hint: 'Solo si es una sociedad. Si eres autónomo, déjalo vacío.' })}
+      </div>`)
+        + card('Copyright e imágenes', 'Todas las páginas dicen «© año Le Pavlove Patisserie. Todos los derechos reservados». El aviso legal explica que los textos, fotos y logotipos son del titular y que para usar fotos hay que pedir permiso por email. No pongas ® salvo que la marca esté concedida.', `<div class="grid">
+        ${T('legal.photoCredit', 'Crédito del fotógrafo (opcional)', { wide: true, hint: 'Ej. «Fotografía: Nombre Apellido». Sale en el aviso legal.' })}
+      </div>`)
+        + card('Condiciones de compra', 'Completa los huecos de las condiciones de los pedidos online.', `<div class="grid">
+        ${T('legal.noPickup', 'Qué pasa con los pedidos no recogidos', { area: true, rows: 2, wide: true })}
+        ${T('legal.cancelHours', 'Antelación para cambiar o cancelar', { hint: 'Ej. 24 horas' })}
+        ${T('legal.bigOrders', 'Condiciones para pedidos grandes o especiales', { area: true, rows: 2, wide: true })}
+        ${T('legal.storage', 'Cómo conservar los productos', { area: true, rows: 2, wide: true })}
+      </div>`);
+    },
     aviso() {
       return card('Aviso para todos los clientes', 'Sale como una cápsula azul en la parte superior de la web (inicio y tienda). El cliente puede cerrarla. Úsalo para vacaciones, cambios de horario o novedades.', `
         ${CK('notice.on', 'Mostrar el aviso en la web', '')}
@@ -504,6 +522,7 @@
       swap(D.carta.categories, cartaCat, j); cartaCat = j;
       redo(); return;
     }
+    pickMark = /^(gallery\.images|events\.media)/.test(path || '');
     if (act === 'pick' || act === 'pickitem') {
       if (act === 'pickitem') { const it = get(path)[i]; const p = await pickImage(it.img, true); if (p === undefined) return; if (p === null) { delete it.img; delete it.png; } else it.img = p; redo(); return; }
       const p = await pickImage(get(path));
@@ -513,6 +532,7 @@
     if (act === 'clearimg') { setv(path, ''); redo(); return; }
     if (act === 'addmedia') {
       if (b.dataset.t === 'image') {
+        pickMark = true;
         const p = await pickImage('');
         if (!p) return;
         D.events.media.push({ type: 'image', src: p, alt: '', caption: '' });
@@ -544,6 +564,7 @@
 
   /* ---------- Fotos ---------- */
   const lib = () => [...new Set([...LIB, ...(D.uploads || [])])];
+  let pickMark = false;
   function pickImage(current, allowNone) {
     return new Promise((resolve) => {
       const draw = (sel) => `<div class="gal">${lib().map((p) => `<button type="button" data-p="${esc(p)}" aria-pressed="${p === sel}" title="${esc(p.split('/').pop())}"><img src="${src(p)}" alt="${esc(p.split('/').pop())}" loading="lazy"></button>`).join('')}</div>`;
@@ -565,22 +586,83 @@
         const f = e.target.files[0];
         if (!f) return;
         try {
-          const path = await addUpload(f);
+          const path = await addUpload(f, pickMark);
           closeModal(true); resolve(path);
         } catch (err) { toast('No se pudo leer esa imagen. Prueba con un JPG o PNG.', 'err'); }
       });
     });
   }
   const slugOf = (name) => name.replace(/\.[^.]+$/, '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'foto';
+  // Autoría y copyright dentro de la foto (EXIF en el WebP), como las del fotógrafo
+  function tiffExif(entries) {
+    const enc = new TextEncoder();
+    const vals = entries.map(([tag, txt]) => [tag, enc.encode(txt.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/©/g, '(c)') + '\0')]);
+    const ifd = 8; const n = vals.length; let off = ifd + 2 + n * 12 + 4;
+    const size = off + vals.reduce((a, [, b]) => a + b.length + (b.length % 2), 0);
+    const buf = new Uint8Array(size); const dv = new DataView(buf.buffer);
+    buf.set([0x49, 0x49, 0x2a, 0x00]); dv.setUint32(4, ifd, true); dv.setUint16(ifd, n, true);
+    vals.sort((a, b) => a[0] - b[0]).forEach(([tag, bytes], i) => {
+      const e = ifd + 2 + i * 12;
+      dv.setUint16(e, tag, true); dv.setUint16(e + 2, 2, true); dv.setUint32(e + 4, bytes.length, true);
+      if (bytes.length <= 4) buf.set(bytes, e + 8); else { dv.setUint32(e + 8, off, true); buf.set(bytes, off); off += bytes.length + (bytes.length % 2); }
+    });
+    return buf;
+  }
+  function withExif(dataUrl) {
+    try {
+      const bin = atob(dataUrl.split(',')[1]);
+      const src = Uint8Array.from(bin, (ch) => ch.charCodeAt(0));
+      const dv = new DataView(src.buffer);
+      const fourcc = (o) => String.fromCharCode(...src.subarray(o, o + 4));
+      if (fourcc(0) !== 'RIFF' || fourcc(8) !== 'WEBP') return dataUrl;
+      const chunks = [];
+      for (let o = 12; o + 8 <= src.length;) { const len = dv.getUint32(o + 4, true); chunks.push([fourcc(o), src.subarray(o + 8, o + 8 + len)]); o += 8 + len + (len % 2); }
+      let w; let h; let flags = 0x08;
+      const vp8x = chunks.find((c) => c[0] === 'VP8X');
+      if (vp8x) { flags |= vp8x[1][0]; const b = vp8x[1]; w = 1 + (b[4] | b[5] << 8 | b[6] << 16); h = 1 + (b[7] | b[8] << 8 | b[9] << 16); }
+      else {
+        const [id, d] = chunks[0];
+        if (id === 'VP8 ') { w = (d[6] | d[7] << 8) & 0x3fff; h = (d[8] | d[9] << 8) & 0x3fff; }
+        else if (id === 'VP8L') { const bits = d[1] | d[2] << 8 | d[3] << 16 | d[4] << 24; w = 1 + (bits & 0x3fff); h = 1 + ((bits >>> 14) & 0x3fff); flags |= 0x10; }
+        else return dataUrl;
+      }
+      const year = new Date().getFullYear();
+      const exif = tiffExif([[0x013b, 'Le Pavlove Patisserie'], [0x8298, `Copyright (c) ${year} Le Pavlove Patisserie. Todos los derechos reservados. Uso solo con autorizacion: ${D.site.email}`]]);
+      const x = new Uint8Array(10); x[0] = flags;
+      [w - 1, h - 1].forEach((v, k) => { x[4 + k * 3] = v & 255; x[5 + k * 3] = (v >> 8) & 255; x[6 + k * 3] = (v >> 16) & 255; });
+      const out = [['VP8X', x], ...chunks.filter((c) => c[0] !== 'VP8X' && c[0] !== 'EXIF'), ['EXIF', exif]];
+      const total = 12 + out.reduce((a, [, d]) => a + 8 + d.length + (d.length % 2), 0);
+      const res = new Uint8Array(total); const rv = new DataView(res.buffer);
+      res.set([82, 73, 70, 70]); rv.setUint32(4, total - 8, true); res.set([87, 69, 66, 80], 8);
+      let o = 12;
+      out.forEach(([id, d]) => { res.set([...id].map((ch) => ch.charCodeAt(0)), o); rv.setUint32(o + 4, d.length, true); res.set(d, o + 8); o += 8 + d.length + (d.length % 2); });
+      let s2 = ''; for (let i = 0; i < res.length; i += 0x8000) s2 += String.fromCharCode(...res.subarray(i, i + 0x8000));
+      return 'data:image/webp;base64,' + btoa(s2);
+    } catch (e) { return dataUrl; }
+  }
+  // Logo para la marca de agua de la galería y los eventos
+  const wmLogo = new Image();
+  wmLogo.src = 'assets/img/marca/logo-ivory.svg';
+  function drawWatermark(ctx, w, h) {
+    if (!wmLogo.complete || !wmLogo.naturalWidth) return;
+    const lw = w * 0.2; const lh = lw * (108.8 / 361.8); const m = w * 0.045;
+    ctx.save();
+    ctx.globalAlpha = 0.72;
+    ctx.shadowColor = 'rgba(10, 12, 60, .55)'; ctx.shadowBlur = Math.max(2, lw / 60); ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 2;
+    ctx.drawImage(wmLogo, w - lw - m, h - lh - m, lw, lh);
+    ctx.restore();
+  }
   // Guarda una imagen en 3 anchos (480/960/1600) como las fotos de la web
-  function addCanvasUpload(source, w0, h0, slug) {
+  function addCanvasUpload(source, w0, h0, slug, mark) {
     const id = `assets/img/uploads/${slug}-${Date.now().toString(36)}`;
     let path = '';
     for (const [w, suf] of [[1600, ''], [960, '-960'], [480, '-480']]) {
       const sc = Math.min(1, w / w0);
       const cv = document.createElement('canvas');
       cv.width = Math.round(w0 * sc); cv.height = Math.round(h0 * sc);
-      cv.getContext('2d').drawImage(source, 0, 0, cv.width, cv.height);
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(source, 0, 0, cv.width, cv.height);
+      if (mark) drawWatermark(ctx, cv.width, cv.height);
       let url = cv.toDataURL('image/webp', suf ? 0.8 : 0.84);
       if (!url.startsWith('data:image/webp')) { // Safari antiguo: una sola PNG
         url = cv.toDataURL('image/png');
@@ -589,7 +671,7 @@
         path = id + '.png';
         break;
       }
-      pending[id + suf + '.webp'] = url;
+      pending[id + suf + '.webp'] = withExif(url);
       if (!suf) path = id + '.webp';
     }
     D.uploads = D.uploads || [];
@@ -597,9 +679,9 @@
     persistPending();
     return path;
   }
-  async function addUpload(file) {
+  async function addUpload(file, mark) {
     const bmp = await createImageBitmap(file);
-    return addCanvasUpload(bmp, bmp.width, bmp.height, slugOf(file.name));
+    return addCanvasUpload(bmp, bmp.width, bmp.height, slugOf(file.name), mark);
   }
   // Vídeos del carrusel de eventos: se suben tal cual y se saca una portada
   const vidInput = () => $('#vidUp');
@@ -619,7 +701,7 @@
         v.currentTime = Math.min(0.6, (v.duration || 1) / 3);
         await new Promise((res) => { v.onseeked = res; });
         const slug = slugOf(f.name);
-        const poster = addCanvasUpload(v, v.videoWidth, v.videoHeight, slug + '-portada');
+        const poster = addCanvasUpload(v, v.videoWidth, v.videoHeight, slug + '-portada', true);
         const ext = (f.name.match(/\.(mp4|webm|mov)$/i) || [, 'mp4'])[1].toLowerCase();
         const path = `assets/video/uploads/${slug}-${Date.now().toString(36)}.${ext}`;
         pending[path] = url;

@@ -15,7 +15,7 @@
   const rich = (s) => esc(s).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
   const icon = (n) => `<svg aria-hidden="true"><use href="#${esc(n || 'flor')}"/></svg>`;
   // Fotos con variantes -480/-960 (las del fotógrafo y las subidas desde el panel)
-  const SIZED = /^assets\/img\/(p|uploads)\/[^/]+\.webp$/;
+  const SIZED = /^assets\/img\/(p|p\/galeria|uploads)\/[^/]+\.webp$/;
   const srcsetOf = (p) => { if (!SIZED.test(p || '')) return ''; const b = p.slice(0, -5); return `${b}-480.webp 480w, ${b}-960.webp 960w, ${p} 1600w`; };
   const small = (p) => (SIZED.test(p || '') ? p.slice(0, -5) + '-480.webp' : p);
   const img = (p, alt, sizes, cls = '', extra = '') => {
@@ -225,8 +225,23 @@
         <div><span class="eyebrow">Pedidos</span><a href="https://wa.me/${esc(S.whatsapp)}" target="_blank" rel="noopener" class="ulink">WhatsApp ${esc(S.phone)}</a><br><a href="mailto:${esc(S.email)}" class="ulink">${esc(S.email)}</a></div>
         <div><span class="eyebrow">Síguenos</span><a href="https://www.instagram.com/${esc(S.instagram)}" target="_blank" rel="noopener" class="ulink">Instagram @${esc(S.instagram)}</a></div>`);
 
-    const yr = q('[data-year]');
-    if (yr) yr.textContent = new Date().getFullYear();
+    qa('[data-year]').forEach((y) => (y.textContent = new Date().getFullYear()));
+
+    /* Páginas legales: datos del titular (los rellena el dueño en el panel) */
+    const L = D.legal || {};
+    qa('[data-legal]').forEach((el) => {
+      if (el.dataset.ph == null) el.dataset.ph = el.textContent;
+      const v = L[el.dataset.legal];
+      el.textContent = v || el.dataset.ph;
+      el.classList.toggle('todo', !v);
+    });
+    qa('[data-site]').forEach((el) => { if (S[el.dataset.site]) el.textContent = S[el.dataset.site]; });
+    qa('[data-hours-text]').forEach((el) => {
+      const lc = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+      el.textContent = full.closed ? 'según el horario publicado' : full.same ? `${lc(full.days)}, de ${full.parts[0].from} a ${full.parts[0].to}` : full.parts.map((pt) => `${lc(pt.label)}, de ${pt.from} a ${pt.to}`).join('; ');
+    });
+    const cr = q('[data-legal-credit]');
+    if (cr) { cr.hidden = !L.photoCredit; cr.textContent = L.photoCredit || ''; }
 
     /* Eventos */
     const E = D.events;

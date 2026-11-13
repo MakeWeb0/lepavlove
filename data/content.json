@@ -615,7 +615,7 @@
     "media": [
       {
         "type": "image",
-        "src": "assets/img/p/pavlova-cumple.webp",
+        "src": "assets/img/p/galeria/pavlova-cumple.webp",
         "alt": "Pavlova de cumpleaños con fresas junto a su caja",
         "caption": "Cumpleaños"
       },
@@ -628,25 +628,25 @@
       },
       {
         "type": "image",
-        "src": "assets/img/p/pavlova-grande.webp",
+        "src": "assets/img/p/galeria/pavlova-grande.webp",
         "alt": "Pavlova grande cubierta de fresas",
         "caption": "Pavlova grande"
       },
       {
         "type": "image",
-        "src": "assets/img/p/packaging.webp",
+        "src": "assets/img/p/galeria/packaging.webp",
         "alt": "Cajas y bolsas de Le Pavlove listas para regalar",
         "caption": "Detalles para regalar"
       },
       {
         "type": "image",
-        "src": "assets/img/p/bites.webp",
+        "src": "assets/img/p/galeria/bites.webp",
         "alt": "Bites de pavlova con fresa",
         "caption": "Cajas de bites"
       },
       {
         "type": "image",
-        "src": "assets/img/p/matcha-mesa.webp",
+        "src": "assets/img/p/galeria/matcha-mesa.webp",
         "alt": "Mesa con matchas y pavlova",
         "caption": "Mesas dulces"
       }
@@ -657,59 +657,59 @@
     "hint": "Arrastra para girar",
     "images": [
       {
-        "img": "assets/img/p/pavlova-caja.webp",
+        "img": "assets/img/p/galeria/pavlova-caja.webp",
         "alt": "Pavlova con fresas dentro de su caja azul de Le Pavlove"
       },
       {
-        "img": "assets/img/p/pavlova-personal.webp",
+        "img": "assets/img/p/galeria/pavlova-personal.webp",
         "alt": "Pavlova personal con nata, dulce de leche y una fresa"
       },
       {
-        "img": "assets/img/p/cuplova.webp",
+        "img": "assets/img/p/galeria/cuplova.webp",
         "alt": "CupLova tradicional en vaso con fresas y dulce de leche"
       },
       {
-        "img": "assets/img/p/matchas.webp",
+        "img": "assets/img/p/galeria/matchas.webp",
         "alt": "Tres matchas latte de colores sobre fondo azul"
       },
       {
-        "img": "assets/img/p/pavlova-grande.webp",
+        "img": "assets/img/p/galeria/pavlova-grande.webp",
         "alt": "Pavlova grande de cumpleaños cubierta de fresas"
       },
       {
-        "img": "assets/img/p/iced-latte.webp",
+        "img": "assets/img/p/galeria/iced-latte.webp",
         "alt": "Iced latte sobre el papel con el logo de Le Pavlove"
       },
       {
-        "img": "assets/img/p/parfait.webp",
+        "img": "assets/img/p/galeria/parfait.webp",
         "alt": "CupLova parfait con yogur, granola y fruta"
       },
       {
-        "img": "assets/img/p/packaging.webp",
+        "img": "assets/img/p/galeria/packaging.webp",
         "alt": "Cajas y bolsas azules de Le Pavlove"
       },
       {
-        "img": "assets/img/p/bites.webp",
+        "img": "assets/img/p/galeria/bites.webp",
         "alt": "Tres bites de pavlova con fresa"
       },
       {
-        "img": "assets/img/p/matcha-mesa.webp",
+        "img": "assets/img/p/galeria/matcha-mesa.webp",
         "alt": "Matchas y una pavlova sobre el mantel de Le Pavlove"
       },
       {
-        "img": "assets/img/p/fresita.webp",
+        "img": "assets/img/p/galeria/fresita.webp",
         "alt": "CupLova fresita con fresas y crema"
       },
       {
-        "img": "assets/img/p/batido.webp",
+        "img": "assets/img/p/galeria/batido.webp",
         "alt": "Batido de frutos rojos con bites de pavlova"
       },
       {
-        "img": "assets/img/p/pavlova-cumple.webp",
+        "img": "assets/img/p/galeria/pavlova-cumple.webp",
         "alt": "Pavlova de cumpleaños junto a su caja"
       },
       {
-        "img": "assets/img/p/latte.webp",
+        "img": "assets/img/p/galeria/latte.webp",
         "alt": "Café latte en vaso de doble cristal"
       }
     ]
@@ -1077,6 +1077,17 @@
         "extra": null
       }
     ]
+  },
+  "legal": {
+    "holder": "",
+    "nif": "",
+    "address": "",
+    "registry": "",
+    "photoCredit": "",
+    "noPickup": "",
+    "cancelHours": "",
+    "bigOrders": "",
+    "storage": ""
   },
   "uploads": []
 }

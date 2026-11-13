@@ -930,3 +930,4 @@ body.menu-open .notice { display: none; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 .fly { object-fit: cover; }
+.legal h2 { scroll-margin-top: 110px; }

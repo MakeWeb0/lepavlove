@@ -10,7 +10,7 @@ const read = (p) => readFileSync(new URL(p, root), 'utf8');
 const data = JSON.parse(read('data/content.json'));
 const script = read('js/content.js');
 
-for (const page of ['index.html', 'tienda.html']) {
+for (const page of ['index.html', 'tienda.html', 'aviso-legal.html', 'privacidad.html', 'cookies.html', 'condiciones.html']) {
   const html = read(page);
   const dom = new JSDOM(html, { url: `https://www.lepavlove.es/${page}`, runScripts: 'outside-only' });
   const { window } = dom;
