@@ -172,7 +172,7 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
    ========================================================= */
 .menu { position: fixed; inset: 0; z-index: 80; visibility: hidden; pointer-events: none; }
 .menu.is-open { pointer-events: auto; }
-.menu__bg { --r: 0%; --cx: calc(100% - 50px); --cy: 44px; position: absolute; inset: 0; overflow: hidden; background-color: var(--royal); background-image: url("../assets/img/marca/patron-ivory.svg"); background-size: 160px 160px; clip-path: circle(var(--r) at var(--cx) var(--cy)); }
+.menu__bg { --r: 0%; --cx: calc(100% - 50px); --cy: 44px; position: absolute; inset: 0; overflow: hidden; background-color: var(--royal); background-image: url("../assets/img/marca/monograma-ivory.svg"); background-size: 160px 160px; clip-path: circle(var(--r) at var(--cx) var(--cy)); }
 .menu__ilu { position: absolute; right: -3%; bottom: 0; width: min(660px, 46vw); transform: translateY(40%); pointer-events: none; }
 .menu__inner { position: relative; height: 100%; display: grid; grid-template-columns: .8fr 1.2fr; grid-template-rows: 1fr auto auto; gap: 24px 70px; padding: 120px var(--gutter) 36px; color: var(--ivory); overflow-y: auto; }
 .menu__visual { position: relative; display: grid; place-items: center; }
@@ -668,7 +668,7 @@ body.menu-open .nav__cart { opacity: 0; pointer-events: none; }
 
 /* Productos */
 .shop { position: relative; overflow: hidden; padding: 150px 0 clamp(80px, 9vw, 130px); background-color: var(--royal); color: var(--ivory);
-  background-image: url("../assets/img/marca/patron-ivory.svg");
+  background-image: url("../assets/img/marca/monograma-ivory.svg");
   background-size: 160px 160px; }
 .shop__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; margin-bottom: 44px; }
 .shop__head .title { max-width: 12ch; margin: 18px 0 16px; }
@@ -931,3 +931,16 @@ body.menu-open .notice { display: none; }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 .fly { object-fit: cover; }
 .legal h2 { scroll-margin-top: 110px; }
+
+/* =========================================================
+   MONOGRAMA DE MARCA — el logo repetido en todo lo azul,
+   como el estampado de un bolso de lujo
+   ========================================================= */
+.hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader {
+  background-image: url("../assets/img/marca/monograma-ivory.svg");
+  background-size: 240px 240px;
+  background-position: center top;
+}
+@media (max-width: 700px) {
+  .hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader { background-size: 180px 180px; }
+}
