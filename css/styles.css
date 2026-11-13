@@ -934,3 +934,9 @@ body.menu-open .notice { display: none; }
 @media (max-width: 700px) {
   .hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader, .map, .cart__head, .page-legal .nav { background-size: 180px 180px; }
 }
+/* El dibujo se funde con el azul sin tapar el monograma (antes lo cortaba una franja azul lisa) */
+.hero::after, .page-hero::after { content: none; }
+.hero__ilu { -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 92%); mask-image: linear-gradient(to bottom, #000 45%, transparent 92%); }
+.page-hero__ilu { -webkit-mask-image: linear-gradient(to bottom, #000 22%, transparent 44%); mask-image: linear-gradient(to bottom, #000 22%, transparent 44%); }
+/* Sin rendija clara entre dos bloques azules seguidos */
+.hero + .about, .reviews + .franchise, .page-hero + .shop, .shop + .shop-info { margin-top: -1px; }
