@@ -874,9 +874,9 @@ body.menu-open .notice { display: none; }
 @media (hover: hover) { .events__arrow:not(:disabled):hover { background: var(--royal); color: var(--ivory); } }
 
 /* =========================================================
-   FRANQUICIAS (navy del manual)
+   FRANQUICIAS
    ========================================================= */
-.franchise { position: relative; overflow: hidden; background: var(--navy); color: var(--ivory); padding: clamp(100px, 12vw, 160px) 0; }
+.franchise { position: relative; overflow: hidden; background: var(--royal); color: var(--ivory); padding: clamp(100px, 12vw, 160px) 0; }
 .franchise :focus-visible { outline-color: var(--ivory); }
 .franchise__form :focus-visible { outline-color: var(--royal); }
 .franchise__flor { position: absolute; right: -160px; top: -140px; width: 560px; height: 560px; color: rgba(242, 233, 213, .06); animation: spin 70s linear infinite; pointer-events: none; }
@@ -926,11 +926,11 @@ body.menu-open .notice { display: none; }
    MONOGRAMA DE MARCA — el logo repetido en todo lo azul,
    como el estampado de un bolso de lujo
    ========================================================= */
-.hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader {
+.hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader, .map, .cart__head, .page-legal .nav {
   background-image: url("../assets/img/marca/monograma-ivory.svg");
   background-size: 240px 240px;
   background-position: center top;
 }
 @media (max-width: 700px) {
-  .hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader { background-size: 180px 180px; }
+  .hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader, .map, .cart__head, .page-legal .nav { background-size: 180px 180px; }
 }
