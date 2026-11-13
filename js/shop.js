@@ -46,7 +46,7 @@
       desc: 'Vainilla de Madagascar, dulce de leche argentino, mermelada de fresa y trocitos de pavlova.',
       allergens: ['Leche', 'Huevo', 'Frutos secos'],
       variants: [{ label: '2 bolas', price: 2 }, { label: '4 bolas', price: 3.5 }, { label: 'Batido 355 ml', price: 6 }] },
-    { id: 'cafe-grano', cat: 'cafe', name: 'Café de Quindío en grano', size: 'Colombia, gourmet', img: 'assets/img/cafe.webp',
+    { id: 'cafe-grano', cat: 'cafe', name: 'Café de Quindío en grano', size: 'Colombia, gourmet', img: 'assets/img/p/latte.webp',
       desc: 'El mismo café colombiano que servimos en la barra, para llevártelo a casa.',
       allergens: [],
       variants: [{ label: '250 g', price: 12 }, { label: '454 g', price: 16 }, { label: '2,5 kg', price: 74 }] },

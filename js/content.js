@@ -128,8 +128,6 @@
       setImg(q('.about__main img'), A.photoMain, A.photoMainAlt || '', '(max-width: 1024px) 100vw, 50vw');
       setImg(q('.about__inset img'), A.photoInset, A.photoInsetAlt || '', '(max-width: 700px) 48vw, 22vw');
       text('.about__inset figcaption', A.photoInsetCaption || '');
-      text('.notes__label', A.notesLabel || '');
-      set('.notes__row', (A.notes || []).map((n) => `<figure class="note"><div class="note__img">${img(n.img, n.alt, '(max-width: 700px) 100vw, 33vw')}</div><figcaption>${rich(n.text)}</figcaption></figure>`).join(''));
     }
 
     /* La carta */

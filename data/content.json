@@ -88,25 +88,7 @@
     "photoMainAlt": "Fachada azul de Le Pavlove en Carrer Josep Maria Buck, Elche",
     "photoInset": "assets/img/p/matcha-mesa.webp",
     "photoInsetAlt": "Matcha latte, iced matcha de fresa y una pavlova sobre el mantel de Le Pavlove",
-    "photoInsetCaption": "Una tarde cualquiera",
-    "notesLabel": "Lo que dicen nuestras cajas",
-    "notes": [
-      {
-        "img": "assets/img/brand-vasos.webp",
-        "alt": "Vaso de café azul y vasos transparentes de Le Pavlove",
-        "text": "“Te ves mejor con esto en la mano.”"
-      },
-      {
-        "img": "assets/img/p/packaging.webp",
-        "alt": "Cajas y bolsa azul de Le Pavlove con la frase «Aquí llevo el motivo de mi buen humor»",
-        "text": "“Aquí llevo el motivo de mi buen humor.”"
-      },
-      {
-        "img": "assets/img/brand-cajas.webp",
-        "alt": "Cajas azules de Le Pavlove y papel de seda",
-        "text": "“Abrir esta caja puede causar adicción.”"
-      }
-    ]
+    "photoInsetCaption": "Una tarde cualquiera"
   },
   "carta": {
     "eyebrow": "La carta",
@@ -133,9 +115,9 @@
               "x4 · 12,50 €",
               "x6 · 18 €"
             ],
-            "ill": "assets/img/pavlova.webp",
-            "photo": "assets/img/p/pavlova-personal.webp",
-            "photoOnly": false,
+            "ill": "assets/img/p/pavlova-personal.webp",
+            "photo": "",
+            "photoOnly": true,
             "star": false
           },
           {
@@ -148,9 +130,9 @@
               "x16 · 15 €",
               "x25 · 20 €"
             ],
-            "ill": "assets/img/bites.webp",
-            "photo": "assets/img/p/bites.webp",
-            "photoOnly": false,
+            "ill": "assets/img/p/bites.webp",
+            "photo": "",
+            "photoOnly": true,
             "star": false
           },
           {
@@ -174,9 +156,9 @@
             "chips": [
               "Para compartir"
             ],
-            "ill": "assets/img/grande.webp",
-            "photo": "assets/img/p/pavlova-grande.webp",
-            "photoOnly": false,
+            "ill": "assets/img/p/pavlova-grande.webp",
+            "photo": "",
+            "photoOnly": true,
             "star": false
           }
         ]
@@ -194,9 +176,9 @@
             "desc": "Pavlova triturada, dulce de leche, crema de vainilla de Madagascar y fresas.",
             "price": "4,50 €",
             "chips": [],
-            "ill": "assets/img/cuplova.webp",
-            "photo": "assets/img/p/cuplova.webp",
-            "photoOnly": false,
+            "ill": "assets/img/p/cuplova.webp",
+            "photo": "",
+            "photoOnly": true,
             "star": false
           },
           {
@@ -205,9 +187,9 @@
             "desc": "Yogur natural o de frutos rojos, granola artesanal, fresas y miel.",
             "price": "4,50 €",
             "chips": [],
-            "ill": "assets/img/parfait.webp",
-            "photo": "assets/img/p/parfait.webp",
-            "photoOnly": false,
+            "ill": "assets/img/p/parfait.webp",
+            "photo": "",
+            "photoOnly": true,
             "star": false
           },
           {
@@ -216,9 +198,9 @@
             "desc": "Fresas cortadas con crema natural de vainilla de Madagascar.",
             "price": "4,50 €",
             "chips": [],
-            "ill": "assets/img/fresita.webp",
-            "photo": "assets/img/p/fresita.webp",
-            "photoOnly": false,
+            "ill": "assets/img/p/fresita.webp",
+            "photo": "",
+            "photoOnly": true,
             "star": false
           },
           {
@@ -231,9 +213,9 @@
               "4 bolas · 3,50 €",
               "Batido · 6 €"
             ],
-            "ill": "assets/img/heladova.webp",
+            "ill": "assets/img/p/batido.webp",
             "photo": "",
-            "photoOnly": false,
+            "photoOnly": true,
             "star": true
           }
         ]
@@ -330,12 +312,16 @@
               {
                 "name": "Café iced",
                 "note": "",
-                "price": "2 €"
+                "price": "2 €",
+                "img": "assets/img/p/iced-latte.webp",
+                "png": false
               },
               {
                 "name": "Iced latte",
                 "note": "",
-                "price": "2,50 €"
+                "price": "2,50 €",
+                "img": "assets/img/p/iced-latte.webp",
+                "png": false
               },
               {
                 "name": "Chocolatada Le Pavlove",
@@ -345,7 +331,9 @@
               {
                 "name": "Iced latte Disaronno",
                 "note": "",
-                "price": "4,50 €"
+                "price": "4,50 €",
+                "img": "assets/img/p/iced-latte.webp",
+                "png": false
               }
             ]
           }
@@ -375,7 +363,7 @@
                 "name": "Matcha clásico",
                 "note": "",
                 "price": "2,50 €",
-                "img": "assets/img/proc-batir.webp",
+                "img": "assets/img/p/matcha-latte.webp",
                 "png": false
               },
               {
@@ -388,7 +376,9 @@
               {
                 "name": "Matcha latte fresa",
                 "note": "",
-                "price": "3,50 €"
+                "price": "3,50 €",
+                "img": "assets/img/p/matchas.webp",
+                "png": false
               }
             ]
           },
@@ -411,8 +401,8 @@
                 "name": "Iced matcha latte frutal",
                 "note": "",
                 "price": "4 €",
-                "img": "assets/img/matcha.webp",
-                "png": true
+                "img": "assets/img/p/matchas.webp",
+                "png": false
               },
               {
                 "name": "Iced matcha leche condensada",
@@ -422,7 +412,9 @@
               {
                 "name": "Coconut matcha latte",
                 "note": "",
-                "price": "4,50 €"
+                "price": "4,50 €",
+                "img": "assets/img/p/matchas.webp",
+                "png": false
               }
             ]
           },
@@ -669,6 +661,10 @@
         "alt": "CupLova tradicional en vaso con fresas y dulce de leche"
       },
       {
+        "img": "assets/img/p/galeria/cajas.webp",
+        "alt": "Cajas azules y papel de seda de Le Pavlove"
+      },
+      {
         "img": "assets/img/p/galeria/matchas.webp",
         "alt": "Tres matchas latte de colores sobre fondo azul"
       },
@@ -721,8 +717,8 @@
     "hint": "Desliza para verlo",
     "steps": [
       {
-        "img": "assets/img/pavlova-corte.webp",
-        "alt": "Pavlova cortada mostrando el merengue",
+        "img": "assets/img/p/pavlova-personal.webp",
+        "alt": "Pavlova con su base de merengue, dulce de leche y nata",
         "icon": "flor",
         "title": "El merengue",
         "text": "Merengue francés con almendra y nuez molida, horneado despacio para que cruja por fuera y quede tierno por dentro."
@@ -742,8 +738,8 @@
         "text": "Fresas frescas cortadas y colocadas una a una, como los pétalos de una flor."
       },
       {
-        "img": "assets/img/proc-batir.webp",
-        "alt": "Matcha batido a mano con chasen",
+        "img": "assets/img/p/matchas.webp",
+        "alt": "Matchas latte preparados en la barra",
         "icon": "arandano",
         "title": "La barra",
         "text": "Matcha tamizado y batido con chasen, mermelada de fresa natural y café de Quindío molido al momento."
@@ -1025,8 +1021,8 @@
         "cat": "helado",
         "name": "Heladova",
         "size": "helado artesano",
-        "img": "assets/img/heladova.webp",
-        "art": true,
+        "img": "assets/img/p/batido.webp",
+        "art": false,
         "hidden": false,
         "desc": "Vainilla de Madagascar, dulce de leche argentino, mermelada de fresa y trocitos de pavlova.",
         "allergens": [
@@ -1055,7 +1051,7 @@
         "cat": "cafe",
         "name": "Café de Quindío en grano",
         "size": "Colombia, gourmet",
-        "img": "assets/img/cafe.webp",
+        "img": "assets/img/p/latte.webp",
         "art": false,
         "hidden": false,
         "desc": "El mismo café colombiano que servimos en la barra, para llevártelo a casa.",

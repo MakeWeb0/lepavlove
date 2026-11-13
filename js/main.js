@@ -410,12 +410,6 @@
     gsap.fromTo('.about__main img', { yPercent: -10 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.about__photos', start: 'top bottom', end: 'bottom top', scrub: true } });
     gsap.from('.about__inset', { y: 80, rotate: 14, autoAlpha: 0, duration: 1.4, delay: 0.5, ease: 'back.out(1.4)', clearProps: 'transform', scrollTrigger: { trigger: '.about__photos', start: 'top 80%' } });
     gsap.from('.about__text .more', { y: 20, autoAlpha: 0, duration: 1, ease, scrollTrigger: { trigger: '.about__text .more', start: 'top 92%' } });
-    gsap.from('.notes__label', { y: 20, autoAlpha: 0, duration: 1, ease, scrollTrigger: { trigger: '.notes', start: 'top 85%' } });
-    gsap.from('.note', {
-      y: 90, rotate: (i) => [-4, 3, -3][i], autoAlpha: 0, duration: 1.4, stagger: 0.14, ease,
-      scrollTrigger: { trigger: '.notes__row', start: 'top 85%' },
-    });
-    gsap.from('.note figcaption', { y: 16, autoAlpha: 0, duration: 1, stagger: 0.14, delay: 0.5, ease, scrollTrigger: { trigger: '.notes__row', start: 'top 85%' } });
     }
 
     // Eventos y franquicias

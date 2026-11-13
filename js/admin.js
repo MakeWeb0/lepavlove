@@ -23,7 +23,7 @@
   const LIB = [
     ...['pavlova-caja', 'pavlova-personal', 'cuplova', 'matchas', 'pavlova-grande', 'iced-latte', 'parfait', 'packaging', 'bites', 'matcha-mesa', 'fresita', 'batido', 'pavlova-cumple', 'latte'].map((n) => `assets/img/p/galeria/${n}.webp`),
     ...['pavlova-personal', 'bites', 'pavlova-caja', 'pavlova-grande', 'pavlova-cumple', 'cuplova', 'cuplova-alta', 'parfait', 'parfait-fresas', 'parfait-capas', 'fresita', 'iced-latte', 'latte', 'matchas', 'matcha-latte', 'matcha-mesa', 'barra', 'batido', 'packaging'].map((n) => `assets/img/p/${n}.webp`),
-    ...['pavlova', 'bites', 'grande', 'cuplova', 'parfait', 'fresita', 'heladova', 'matcha', 'fachada', 'proc-batir', 'pavlova-corte', 'cafe', 'brand-vasos', 'brand-bolsa', 'brand-cajas', 'brand-antojo'].map((n) => `assets/img/${n}.webp`),
+    'assets/img/p/galeria/cajas.webp', 'assets/img/fachada.webp',
   ];
   const SIZED = /^assets\/img\/(p|p\/galeria|uploads)\/[^/]+\.webp$/;
   const ICONS = [['flor', 'Flor de Le Pavlove'], ['frambuesa', 'Frambuesa'], ['arandano', 'Arándano'], ['hoja', 'Hoja']];
@@ -61,18 +61,18 @@
 
   /* ---------- Plantillas de elementos nuevos ---------- */
   const TPL = {
-    cardItem: () => ({ name: 'Nuevo producto', size: '', desc: '', price: '0,00 €', chips: [], ill: 'assets/img/pavlova.webp', photo: '', photoOnly: false, star: false }),
+    cardItem: () => ({ name: 'Nuevo producto', size: '', desc: '', price: '0,00 €', chips: [], ill: 'assets/img/p/pavlova-personal.webp', photo: '', photoOnly: true, star: false }),
     menuItem: () => ({ name: 'Nuevo producto', note: '', price: '0 €' }),
     group: () => ({ col: 1, title: 'Nuevo grupo', icon: 'flor', note: '', style: 'items', beans: null, items: [] }),
     catCards: () => ({ id: 'c' + Date.now().toString(36), name: 'Nueva categoría', icon: 'flor', layout: 'cards', intro: '', items: [TPL.cardItem()] }),
     catMenu: () => ({ id: 'c' + Date.now().toString(36), name: 'Nueva categoría', icon: 'flor', layout: 'menu', intro: '', feature: null, groups: [TPL.group()] }),
-    feature: () => ({ img: 'assets/img/cafe.webp', title: 'Título destacado', text: 'Una frase sobre este grupo de productos.' }),
+    feature: () => ({ img: 'assets/img/p/latte.webp', title: 'Título destacado', text: 'Una frase sobre este grupo de productos.' }),
     beans: () => ({ title: 'Llévate algo a casa', chips: ['250 g · 12 €'] }),
     review: () => ({ name: 'Nombre', text: 'Escribe aquí la opinión.', big: false }),
     galImg: () => ({ img: 'assets/img/p/pavlova-personal.webp', alt: '' }),
     point: () => ({ title: 'Nuevo punto', text: '' }),
-    step: () => ({ img: 'assets/img/pavlova-corte.webp', alt: '', icon: 'flor', title: 'Nuevo paso', text: '' }),
-    product: () => ({ id: 'p-' + Date.now().toString(36), cat: 'pavlovas', name: 'Nuevo producto', size: '', img: 'assets/img/pavlova.webp', art: false, hidden: false, desc: '', allergens: [], variants: [{ label: '1 ud', price: 0 }], extra: null }),
+    step: () => ({ img: 'assets/img/p/pavlova-personal.webp', alt: '', icon: 'flor', title: 'Nuevo paso', text: '' }),
+    product: () => ({ id: 'p-' + Date.now().toString(36), cat: 'pavlovas', name: 'Nuevo producto', size: '', img: 'assets/img/p/pavlova-personal.webp', art: false, hidden: false, desc: '', allergens: [], variants: [{ label: '1 ud', price: 0 }], extra: null }),
     variant: () => ({ label: 'Formato', price: 0 }),
     extra: () => ({ label: 'Con extra', price: 1 }),
   };
@@ -137,13 +137,7 @@
           ${IM('about.photoMain', 'Foto grande')}${T('about.photoMainAlt', 'Descripción de la foto', { hint: 'Para personas que no pueden verla y para Google.' })}
           ${IM('about.photoInset', 'Foto pequeña')}${T('about.photoInsetAlt', 'Descripción de la foto')}
           ${T('about.photoInsetCaption', 'Pie de la foto pequeña', { wide: true })}
-        </div>`)
-        + card('Lo que dicen nuestras cajas', 'Tres fotos de tu packaging con su frase.', `
-        ${T('about.notesLabel', 'Título de este bloque')}
-        <div class="list" style="margin-top:14px">${A.notes.map((n, i) => IT('about.notes', i, A.notes.length, {
-    fixed: true, thumb: n.img, title: n.text, live: `about.notes.${i}.text`,
-    body: `<div class="grid">${IM(`about.notes.${i}.img`, 'Foto')}${T(`about.notes.${i}.alt`, 'Descripción de la foto')}${T(`about.notes.${i}.text`, 'Frase', { area: true, wide: true, rows: 2 })}</div>`,
-  })).join('')}</div>`);
+        </div>`);
     },
     carta() {
       const C = D.carta;
