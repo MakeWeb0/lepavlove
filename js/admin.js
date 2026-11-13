@@ -19,19 +19,25 @@
 
   const REPO = 'MakeWeb0/lepavlove';
   const BRANCH = 'main';
-  const LIB = ['pavlova', 'bites', 'bites-caja', 'pavlova-caja', 'grande', 'pavlova-cumple', 'pavlova-corte', 'cuplova', 'parfait', 'fresita', 'heladova', 'cafe', 'matcha', 'proc-batir', 'proc-final', 'fresas', 'fachada', 'mesa', 'brand-antojo', 'brand-bolsa', 'brand-cajas', 'brand-caja-larga', 'brand-vasos']
-    .map((n) => `assets/img/${n}.webp`);
-  const ICONS = [['fresa', 'Fresa'], ['frambuesa', 'Frambuesa'], ['arandano', 'Arándano'], ['hoja', 'Hoja'], ['flor', 'Flor']];
+  // Fotos del fotógrafo (con 3 tamaños), ilustraciones y fotos del local
+  const LIB = [
+    ...['pavlova-personal', 'bites', 'pavlova-caja', 'pavlova-grande', 'pavlova-cumple', 'cuplova', 'cuplova-alta', 'parfait', 'parfait-fresas', 'parfait-capas', 'fresita', 'iced-latte', 'latte', 'matchas', 'matcha-latte', 'matcha-mesa', 'barra', 'batido', 'packaging'].map((n) => `assets/img/p/${n}.webp`),
+    ...['pavlova', 'bites', 'grande', 'cuplova', 'parfait', 'fresita', 'heladova', 'matcha', 'fachada', 'proc-batir', 'pavlova-corte', 'cafe', 'brand-vasos', 'brand-bolsa', 'brand-cajas', 'brand-antojo'].map((n) => `assets/img/${n}.webp`),
+  ];
+  const SIZED = /^assets\/img\/(p|uploads)\/[^/]+\.webp$/;
+  const ICONS = [['flor', 'Flor de Le Pavlove'], ['frambuesa', 'Frambuesa'], ['arandano', 'Arándano'], ['hoja', 'Hoja']];
 
   /* ---------- Secciones ---------- */
   const SECTIONS = [
     { id: 'inicio', label: 'Inicio', icon: 'flor', desc: 'Lo primero que ve el cliente al entrar.', page: 'index.html', hash: '' },
-    { id: 'nosotros', label: 'Sobre nosotros', icon: 'fresa', desc: 'Tu historia, las fotos del local y las frases de las cajas.', page: 'index.html', hash: '#nosotros' },
+    { id: 'nosotros', label: 'Sobre nosotros', icon: 'flor', desc: 'Tu historia, las fotos del local y las frases de las cajas.', page: 'index.html', hash: '#nosotros' },
     { id: 'carta', label: 'La carta', icon: 'frambuesa', desc: 'Productos, precios y fotos de la carta.', page: 'index.html', hash: '#carta' },
+    { id: 'eventos', label: 'Eventos', icon: 'flor', desc: 'Celebraciones: textos y el carrusel de fotos y vídeos.', page: 'index.html', hash: '#eventos' },
     { id: 'tienda', label: 'Tienda online', icon: 'hoja', desc: 'Lo que se puede encargar por WhatsApp y recoger.', page: 'tienda.html', hash: '' },
     { id: 'galeria', label: 'Galería', icon: 'arandano', desc: 'Las fotos que giran en el carrusel.', page: 'index.html', hash: '#galeria' },
     { id: 'proceso', label: 'Cómo trabajamos', icon: 'flor', desc: 'Los pasos de “Así nace una pavlova”.', page: 'index.html', hash: '#como-trabajamos' },
-    { id: 'opiniones', label: 'Opiniones', icon: 'fresa', desc: 'Las reseñas que se muestran en las servilletas.', page: 'index.html', hash: '#resenas' },
+    { id: 'opiniones', label: 'Opiniones', icon: 'flor', desc: 'Las reseñas que se muestran en las servilletas.', page: 'index.html', hash: '#resenas' },
+    { id: 'franquicias', label: 'Franquicias', icon: 'hoja', desc: 'El bloque azul marino para captar franquiciados.', page: 'index.html', hash: '#franquicias' },
     { id: 'horario', label: 'Horario y contacto', icon: 'hoja', desc: 'Cuándo abres y cómo te encuentran.', page: 'index.html', hash: '#visitanos' },
     { id: 'aviso', label: 'Aviso especial', icon: 'arandano', desc: 'Un mensaje destacado para todos los clientes.', page: 'index.html', hash: '' },
   ];
@@ -61,7 +67,8 @@
     feature: () => ({ img: 'assets/img/cafe.webp', title: 'Título destacado', text: 'Una frase sobre este grupo de productos.' }),
     beans: () => ({ title: 'Llévate algo a casa', chips: ['250 g · 12 €'] }),
     review: () => ({ name: 'Nombre', text: 'Escribe aquí la opinión.', big: false }),
-    galImg: () => ({ img: 'assets/img/pavlova.webp', alt: '' }),
+    galImg: () => ({ img: 'assets/img/p/pavlova-personal.webp', alt: '' }),
+    point: () => ({ title: 'Nuevo punto', text: '' }),
     step: () => ({ img: 'assets/img/pavlova-corte.webp', alt: '', icon: 'flor', title: 'Nuevo paso', text: '' }),
     product: () => ({ id: 'p-' + Date.now().toString(36), cat: 'pavlovas', name: 'Nuevo producto', size: '', img: 'assets/img/pavlova.webp', art: false, hidden: false, desc: '', allergens: [], variants: [{ label: '1 ud', price: 0 }], extra: null }),
     variant: () => ({ label: 'Formato', price: 0 }),
@@ -83,7 +90,8 @@
   const SEL = (path, label, opts, o = {}) => `<label class="fld${o.wide ? ' wide' : ''}"><span>${label}</span><select data-path="${path}"${o.num ? ' data-kind="num"' : ''}>${opts.map(([v, l]) => `<option value="${esc(v)}"${String(get(path)) === String(v) ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`;
   const CK = (path, label, sub, o = {}) => `<label class="sw${o.wide ? ' wide' : ''}"><input type="checkbox" data-path="${path}"${o.inv ? ' data-inv' : ''}${(o.inv ? !get(path) : get(path)) ? ' checked' : ''}><i></i><span>${label}${sub ? `<small>${sub}</small>` : ''}</span></label>`;
   const OBJ = (path, label, tpl, sub) => `<label class="sw"><input type="checkbox" data-obj="${path}" data-tpl="${tpl}"${get(path) ? ' checked' : ''}><i></i><span>${label}${sub ? `<small>${sub}</small>` : ''}</span></label>`;
-  const src = (p) => esc(pending[p] || p || '');
+  // Miniaturas: la versión pequeña si existe (o la foto recién subida)
+  const src = (p) => esc(pending[p] || (SIZED.test(p || '') ? p.slice(0, -5) + '-480.webp' : p) || '');
   const IM = (path, label, o = {}) => {
     const v = get(path);
     return `<div class="fld${o.wide ? ' wide' : ''}"><span class="fld__l">${label}</span><div class="img"><div class="img__t${v ? '' : ' is-empty'}"><img src="${src(v)}" alt=""></div><div class="img__b"><button type="button" class="btn btn--line btn--sm" data-act="pick" data-path="${path}">${v ? 'Cambiar foto' : 'Elegir foto'}</button>${o.optional && v ? `<button type="button" class="btn btn--ghost btn--sm" data-act="clearimg" data-path="${path}">Quitar foto</button>` : ''}</div></div></div>`;
@@ -144,7 +152,7 @@
       const head = card('Encabezado y pie', '', `<div class="grid">
         ${T('carta.title', 'Título', { em: true })}${T('carta.intro', 'Frase de introducción')}
         ${T('carta.tip', 'Consejo del final', { em: true, wide: true })}
-        ${T('carta.ctaOrder', 'Botón de pedido online')}${T('carta.ctaWhats', 'Botón de WhatsApp')}
+        ${T('carta.ctaOrder', 'Botón de pedido online')}${T('carta.ctaWhats', 'Botón de WhatsApp')}${T('carta.ctaGlovo', 'Botón de Glovo', { hint: 'El enlace se cambia en «Horario y contacto».' })}
         ${T('carta.allergens', 'Aviso de alérgenos', { area: true, wide: true, rows: 3 })}
       </div>`);
       const pills = `<div class="cats" role="group" aria-label="Categorías de la carta">${cats.map((x, i) => `<button type="button" data-act="cat" data-i="${i}" aria-pressed="${i === cartaCat}"><svg aria-hidden="true"><use href="#${esc(x.icon)}"/></svg>${esc(x.name)}</button>`).join('')}<button type="button" class="add" data-act="addcat" data-tpl="catCards">+ Categoría con fotos</button><button type="button" class="add" data-act="addcat" data-tpl="catMenu">+ Categoría en lista</button></div>`;
@@ -242,8 +250,42 @@
           ${T('site.street', 'Dirección')}${T('site.city', 'Código postal y ciudad')}
           ${T('site.mapsUrl', 'Enlace de Google Maps', { wide: true })}
           ${T('site.waMessage', 'Mensaje que se escribe al pulsar WhatsApp', { wide: true })}
+          ${T('site.glovoUrl', 'Enlace de tu tienda en Glovo', { wide: true, hint: 'Déjalo vacío para ocultar el botón de Glovo.' })}
         </div>`)
         + card('Bloque «Visítanos»', '', `<div class="grid">${T('visit.title', 'Título', { em: true, wide: true })}</div>`);
+    },
+    eventos() {
+      const E = D.events;
+      return card('Textos', 'Para cumpleaños, bodas, empresas… El botón abre WhatsApp con el mensaje que escribas aquí.', `<div class="grid">
+        ${T('events.eyebrow', 'Frase pequeña')}${T('events.title', 'Título', { em: true })}
+        ${T('events.text', 'Texto', { area: true, rows: 4, wide: true })}
+        ${LN('events.points', 'Puntos destacados', { rows: 3, wide: true, hint: 'Uno por línea.' })}
+        ${T('events.cta', 'Texto del botón')}${T('events.waMessage', 'Mensaje de WhatsApp', { area: true, rows: 2 })}
+      </div>`)
+        + card('Carrusel de fotos y vídeos', 'Los vídeos se reproducen solos y sin sonido cuando el cliente llega a ellos. Usa vídeos cortos (menos de 30 segundos) en MP4.', `<div class="list">${E.media.map((m, i) => IT('events.media', i, E.media.length, {
+          thumb: m.type === 'video' ? (m.poster || '') : m.src, title: m.caption || (m.type === 'video' ? 'Vídeo' : 'Foto'), live: `events.media.${i}.caption`,
+          small: m.type === 'video' ? 'vídeo' : '',
+          body: `<div class="grid">
+            ${m.type === 'video'
+              ? `<div class="fld"><span class="fld__l">Vídeo</span><video class="vid" src="${esc(pending[m.src] || m.src)}"${m.poster ? ` poster="${src(m.poster)}"` : ''} muted playsinline controls preload="metadata"></video><div class="actions" style="margin-top:8px"><button type="button" class="btn btn--line btn--sm" data-act="pickvideo" data-path="events.media" data-i="${i}">Cambiar vídeo</button></div></div>${IM(`events.media.${i}.poster`, 'Imagen de portada del vídeo')}`
+              : IM(`events.media.${i}.src`, 'Foto')}
+            ${T(`events.media.${i}.caption`, 'Pie (opcional)')}${T(`events.media.${i}.alt`, 'Descripción', { hint: 'Para personas que no pueden verla y para Google.' })}
+          </div>`,
+        })).join('')}</div>
+        <div class="actions"><button type="button" class="btn btn--line btn--sm" data-act="addmedia" data-t="image"><svg aria-hidden="true"><use href="#i-image"/></svg>Añadir foto</button><button type="button" class="btn btn--line btn--sm" data-act="addmedia" data-t="video"><svg aria-hidden="true"><use href="#i-video"/></svg>Añadir vídeo</button></div>
+        <input type="file" id="vidUp" accept="video/mp4,video/webm,video/quicktime" hidden>`);
+    },
+    franquicias() {
+      const F = D.franchise;
+      return card('Textos', 'El formulario envía los datos del interesado a tu WhatsApp.', `<div class="grid">
+        ${T('franchise.eyebrow', 'Frase pequeña')}${T('franchise.title', 'Título', { em: true })}
+        ${T('franchise.text', 'Texto', { area: true, rows: 4, wide: true })}
+        ${T('franchise.formTitle', 'Título del formulario')}${T('franchise.cta', 'Botón de enviar')}
+      </div>`)
+        + card('Puntos fuertes', 'Se numeran solos.', `<div class="list">${F.points.map((pt, i) => IT('franchise.points', i, F.points.length, {
+          title: pt.title, live: `franchise.points.${i}.title`,
+          body: `<div class="grid">${T(`franchise.points.${i}.title`, 'Título')}${T(`franchise.points.${i}.text`, 'Texto', { area: true, rows: 2, wide: true })}</div>`,
+        })).join('')}</div>${addBtn('franchise.points', 'point', 'Añadir punto')}`);
     },
     aviso() {
       return card('Aviso para todos los clientes', 'Sale como una cápsula azul en la parte superior de la web (inicio y tienda). El cliente puede cerrarla. Úsalo para vacaciones, cambios de horario o novedades.', `
@@ -300,7 +342,10 @@
     clearTimeout(prevT);
     prevT = setTimeout(reloadPreview, quick ? 150 : 1100);
   }
-  const persistPending = () => { if (!store.set('lp-pending', JSON.stringify(pending))) { /* demasiado grande: se queda en memoria */ } };
+  const persistPending = () => {
+    const imgs = Object.fromEntries(Object.entries(pending).filter(([k]) => !k.startsWith('assets/video/')));
+    if (!store.set('lp-pending', JSON.stringify(imgs))) { /* demasiado grande: se queda en memoria */ }
+  };
 
   /* ---------- Vista previa ---------- */
   const pv = $('#pv');
@@ -466,6 +511,18 @@
       return;
     }
     if (act === 'clearimg') { setv(path, ''); redo(); return; }
+    if (act === 'addmedia') {
+      if (b.dataset.t === 'image') {
+        const p = await pickImage('');
+        if (!p) return;
+        D.events.media.push({ type: 'image', src: p, alt: '', caption: '' });
+        openSet.add(`events.media.${D.events.media.length - 1}`);
+        redo(); return;
+      }
+      pickVideo(null);
+      return;
+    }
+    if (act === 'pickvideo') { pickVideo(i); return; }
     const arr = path && get(path);
     if (act === 'add') { arr.push(TPL[b.dataset.tpl]()); openSet.add(`${path}.${arr.length - 1}`); redo(); return; }
     if (act === 'up' || act === 'down') {
@@ -514,22 +571,67 @@
       });
     });
   }
-  async function addUpload(file) {
-    const bmp = await createImageBitmap(file);
-    const sc = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
-    const cv = document.createElement('canvas');
-    cv.width = Math.round(bmp.width * sc); cv.height = Math.round(bmp.height * sc);
-    cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
-    let url = cv.toDataURL('image/webp', 0.86);
-    const ext = url.startsWith('data:image/webp') ? 'webp' : 'png';
-    if (ext === 'png') url = cv.toDataURL('image/png');
-    const slug = file.name.replace(/\.[^.]+$/, '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'foto';
-    const path = `assets/img/uploads/${slug}-${Date.now().toString(36)}.${ext}`;
-    pending[path] = url;
+  const slugOf = (name) => name.replace(/\.[^.]+$/, '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'foto';
+  // Guarda una imagen en 3 anchos (480/960/1600) como las fotos de la web
+  function addCanvasUpload(source, w0, h0, slug) {
+    const id = `assets/img/uploads/${slug}-${Date.now().toString(36)}`;
+    let path = '';
+    for (const [w, suf] of [[1600, ''], [960, '-960'], [480, '-480']]) {
+      const sc = Math.min(1, w / w0);
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(w0 * sc); cv.height = Math.round(h0 * sc);
+      cv.getContext('2d').drawImage(source, 0, 0, cv.width, cv.height);
+      let url = cv.toDataURL('image/webp', suf ? 0.8 : 0.84);
+      if (!url.startsWith('data:image/webp')) { // Safari antiguo: una sola PNG
+        url = cv.toDataURL('image/png');
+        if (suf) continue;
+        pending[id + '.png'] = url;
+        path = id + '.png';
+        break;
+      }
+      pending[id + suf + '.webp'] = url;
+      if (!suf) path = id + '.webp';
+    }
     D.uploads = D.uploads || [];
     D.uploads.push(path);
     persistPending();
     return path;
+  }
+  async function addUpload(file) {
+    const bmp = await createImageBitmap(file);
+    return addCanvasUpload(bmp, bmp.width, bmp.height, slugOf(file.name));
+  }
+  // Vídeos del carrusel de eventos: se suben tal cual y se saca una portada
+  const vidInput = () => $('#vidUp');
+  function pickVideo(index) {
+    const inp = vidInput();
+    inp.value = '';
+    inp.onchange = async () => {
+      const f = inp.files[0];
+      if (!f) return;
+      if (f.size > 40 * 1024 * 1024) { toast('Ese vídeo pesa más de 40 MB. Recórtalo o expórtalo en menor calidad.', 'err'); return; }
+      toast('Preparando el vídeo…');
+      try {
+        const url = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+        const v = document.createElement('video');
+        v.muted = true; v.playsInline = true; v.src = URL.createObjectURL(f);
+        await new Promise((res, rej) => { v.onloadeddata = res; v.onerror = rej; });
+        v.currentTime = Math.min(0.6, (v.duration || 1) / 3);
+        await new Promise((res) => { v.onseeked = res; });
+        const slug = slugOf(f.name);
+        const poster = addCanvasUpload(v, v.videoWidth, v.videoHeight, slug + '-portada');
+        const ext = (f.name.match(/\.(mp4|webm|mov)$/i) || [, 'mp4'])[1].toLowerCase();
+        const path = `assets/video/uploads/${slug}-${Date.now().toString(36)}.${ext}`;
+        pending[path] = url;
+        D.uploads.push(path);
+        const item = { type: 'video', src: path, poster, alt: '', caption: '' };
+        if (index == null) { D.events.media.push(item); openSet.add(`events.media.${D.events.media.length - 1}`); } else D.events.media[index] = { ...D.events.media[index], ...item, alt: D.events.media[index].alt, caption: D.events.media[index].caption };
+        URL.revokeObjectURL(v.src);
+        renderEditor(true); changed(true);
+        toast('Vídeo añadido. Se subirá al publicar.', 'ok');
+      } catch (e) { toast('No se pudo leer ese vídeo. Prueba con un MP4.', 'err'); }
+    };
+    inp.click();
   }
 
   /* ---------- Modales y avisos ---------- */
@@ -638,24 +740,29 @@
   async function publish() {
     const cfg = getCfg();
     if (!cfg) { connectModal(); toast('Primero conecta el panel con GitHub.'); return; }
-    if (!(await ask('¿Publicar los cambios?', 'Los clientes los verán en la web en uno o dos minutos.', 'Publicar'))) return;
+    if (!(await ask('¿Publicar los cambios?', 'Los clientes los verán en la web en unos minutos (hasta 10 si ya la tenían abierta).', 'Publicar'))) return;
     const btn = $('#btnPublish');
     btn.classList.add('is-busy'); btn.lastChild.textContent = 'Publicando…';
     try {
-      const used = new Set(JSON.stringify(D).match(/assets\/img\/uploads\/[^"]+/g) || []);
+      // Lo que de verdad usa la web (sin contar la propia lista de subidas)
+      const used = new Set(JSON.stringify({ ...D, uploads: [] }).match(/assets\/(img|video)\/uploads\/[^"]+/g) || []);
       const keep = (D.uploads || []).filter((p) => used.has(p) || !pending[p]);
       D.uploads = keep;
-      for (const p of Object.keys(pending)) {
-        if (!used.has(p)) continue;
-        await putFile(cfg, p, pending[p].split(',')[1], 'Foto nueva desde el panel');
+      const baseOf = (p) => p.replace(/-(480|960)\.webp$/, '.webp');
+      const todo = Object.keys(pending).filter((p) => used.has(baseOf(p)));
+      let n = 0;
+      for (const p of todo) {
+        btn.lastChild.textContent = `Subiendo ${++n}/${todo.length}…`;
+        await putFile(cfg, p, pending[p].split(',')[1], p.startsWith('assets/video/') ? 'Vídeo nuevo desde el panel' : 'Foto nueva desde el panel');
       }
+      btn.lastChild.textContent = 'Publicando…';
       await putFile(cfg, 'data/content.json', b64(JSON.stringify(D, null, 2) + '\n'), 'Actualización de contenido desde el panel');
-      Object.keys(pending).forEach((p) => { if (used.has(p) || !keep.includes(p)) delete pending[p]; });
+      Object.keys(pending).forEach((p) => { if (used.has(baseOf(p)) || !keep.includes(baseOf(p))) delete pending[p]; });
       persistPending();
       PUB = norm(D);
       store.set('lp-draft', JSON.stringify(D));
       refreshStatus();
-      toast('¡Publicado! La web se actualizará en 1-2 minutos.', 'ok');
+      toast('¡Publicado! La web se actualizará en unos minutos.', 'ok');
     } catch (err) {
       toast(netMsg(err), 'err');
     } finally {

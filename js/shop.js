@@ -54,6 +54,8 @@
   // El panel de administración guarda el catálogo en data/content.json
   const PRODUCTS = (LPD && LPD.shop && LPD.shop.products ? LPD.shop.products.filter((p) => !p.hidden).map((p) => ({ ...p, png: p.art, extra: p.extra || undefined })) : BUILTIN);
 
+  const LPimg = (window.LP && window.LP.img) || ((src, alt) => `<img src="${src}" alt="${alt}" loading="lazy" decoding="async">`);
+  const LPsmall = (window.LP && window.LP.small) || ((src) => src);
   const eur = (n) => n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
   const byId = (id) => PRODUCTS.find((p) => p.id === id);
 
@@ -71,7 +73,7 @@
   const grid = $('#shopGrid');
   grid.innerHTML = PRODUCTS.map((p) => `
     <article class="sp" data-cat="${p.cat}" data-id="${p.id}">
-      <div class="sp__art${p.png ? '' : ' sp__art--photo'}"><img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async"></div>
+      <div class="sp__art${p.png ? '' : ' sp__art--photo'}">${LPimg(p.img, p.name, '(max-width: 700px) 92vw, 320px')}</div>
       <div class="sp__body">
         <p class="sp__size">${p.size}</p>
         <h3 class="sp__name">${p.name}</h3>
@@ -182,7 +184,7 @@
       const variant = p.variants.length > 1 ? p.variants[l.v].label : '';
       const extra = l.x && p.extra ? p.extra.label : '';
       return `<li class="ci" data-i="${i}">
-        <div class="ci__img${p.png ? '' : ' ci__img--photo'}"><img src="${p.img}" alt=""></div>
+        <div class="ci__img${p.png ? '' : ' ci__img--photo'}"><img src="${LPsmall(p.img)}" alt=""></div>
         <div class="ci__info">
           <p class="ci__name">${p.name}</p>
           <p class="ci__meta">${[variant, extra].filter(Boolean).join(' · ') || p.size}</p>

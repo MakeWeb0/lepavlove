@@ -14,6 +14,21 @@
   // *texto* → cursiva (el remate de los titulares); salto de línea → <br>
   const rich = (s) => esc(s).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
   const icon = (n) => `<svg aria-hidden="true"><use href="#${esc(n || 'flor')}"/></svg>`;
+  // Fotos con variantes -480/-960 (las del fotógrafo y las subidas desde el panel)
+  const SIZED = /^assets\/img\/(p|uploads)\/[^/]+\.webp$/;
+  const srcsetOf = (p) => { if (!SIZED.test(p || '')) return ''; const b = p.slice(0, -5); return `${b}-480.webp 480w, ${b}-960.webp 960w, ${p} 1600w`; };
+  const small = (p) => (SIZED.test(p || '') ? p.slice(0, -5) + '-480.webp' : p);
+  const img = (p, alt, sizes, cls = '', extra = '') => {
+    const ss = srcsetOf(p);
+    return `<img${cls ? ` class="${cls}"` : ''} src="${esc(ss ? small(p).replace('-480.webp', '-960.webp') : p)}"${ss ? ` srcset="${ss}" sizes="${sizes}"` : ''} alt="${esc(alt)}" loading="lazy" decoding="async"${extra}>`;
+  };
+  const setImg = (el, p, alt, sizes) => {
+    if (!el || !p) return;
+    const ss = srcsetOf(p);
+    el.src = ss ? p.slice(0, -5) + '-960.webp' : p;
+    if (ss) { el.srcset = ss; el.sizes = sizes; } else { el.removeAttribute('srcset'); el.removeAttribute('sizes'); }
+    if (alt != null) el.alt = alt;
+  };
   const set = (sel, html, ctx) => { const el = q(sel, ctx); if (el) el.innerHTML = html; return el; };
   const text = (sel, t, ctx) => { const el = q(sel, ctx); if (el) el.textContent = t; return el; };
 
@@ -50,7 +65,7 @@
   };
   const townOf = (city) => String(city || '').replace(/^\d+\s*/, '').split(',')[0].trim();
 
-  const LP = (window.LP = { data: null, preview: PREVIEW, esc, rich, hoursInfo, townOf });
+  const LP = (window.LP = { data: null, preview: PREVIEW, esc, rich, hoursInfo, townOf, img, small, srcsetOf });
 
   /* ---------- Pintar ---------- */
   function applyAll(D) {
@@ -110,11 +125,11 @@
       const more = q('.about__text .more');
       (A.paragraphs || []).forEach((t) => more.insertAdjacentHTML('beforebegin', `<p class="reveal">${rich(t)}</p>`));
       more.innerHTML = `${esc(A.link)} <span aria-hidden="true">›</span>`;
-      const im = q('.about__main img'); if (im) { im.src = A.photoMain; im.alt = A.photoMainAlt || ''; }
-      const ii = q('.about__inset img'); if (ii) { ii.src = A.photoInset; ii.alt = A.photoInsetAlt || ''; }
+      setImg(q('.about__main img'), A.photoMain, A.photoMainAlt || '', '(max-width: 1024px) 100vw, 50vw');
+      setImg(q('.about__inset img'), A.photoInset, A.photoInsetAlt || '', '(max-width: 700px) 48vw, 22vw');
       text('.about__inset figcaption', A.photoInsetCaption || '');
       text('.notes__label', A.notesLabel || '');
-      set('.notes__row', (A.notes || []).map((n) => `<figure class="note"><div class="note__img"><img src="${esc(n.img)}" alt="${esc(n.alt)}" loading="lazy" decoding="async"></div><figcaption>${rich(n.text)}</figcaption></figure>`).join(''));
+      set('.notes__row', (A.notes || []).map((n) => `<figure class="note"><div class="note__img">${img(n.img, n.alt, '(max-width: 700px) 100vw, 33vw')}</div><figcaption>${rich(n.text)}</figcaption></figure>`).join(''));
     }
 
     /* La carta */
@@ -132,6 +147,11 @@
       const cb = qa('.carta__ctas .btn__label');
       cb[0] && (cb[0].textContent = C.ctaOrder);
       cb[1] && (cb[1].textContent = C.ctaWhats);
+      const gl = q('.carta__glovo');
+      if (gl) {
+        gl.hidden = !S.glovoUrl;
+        if (S.glovoUrl) { gl.href = S.glovoUrl; q('.btn__label', gl).textContent = C.ctaGlovo || 'Pídelo en Glovo'; }
+      }
       text('.allergens', C.allergens || '');
     }
 
@@ -140,7 +160,7 @@
     if (G && q('#ring')) {
       set('.gallery h2', rich(G.title));
       set('.gallery__hint', `<span></span>${esc(G.hint)}<span></span>`);
-      set('#ring', (G.images || []).map((g) => `<figure class="card"><img src="${esc(g.img)}" alt="${esc(g.alt)}" draggable="false" loading="lazy" decoding="async"></figure>`).join(''));
+      set('#ring', (G.images || []).map((g) => `<figure class="card">${img(g.img, g.alt, '280px', '', ' draggable="false"')}</figure>`).join(''));
     }
 
     /* Cómo trabajamos */
@@ -153,7 +173,7 @@
       qa('.step:not(.step--intro):not(.step--cta)').forEach((s) => s.remove());
       const cta = q('.step--cta');
       (P.steps || []).forEach((s, i) => cta.insertAdjacentHTML('beforebegin',
-        `<article class="step"><div class="step__img"><img src="${esc(s.img)}" alt="${esc(s.alt)}" loading="lazy" decoding="async"></div><div class="step__meta"><span class="step__n">${String(i + 1).padStart(2, '0')}</span><svg class="step__icon" aria-hidden="true"><use href="#${esc(s.icon || 'flor')}"/></svg></div><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></article>`));
+        `<article class="step"><div class="step__img">${img(s.img, s.alt, '(max-width: 900px) 80vw, 380px')}</div><div class="step__meta"><span class="step__n">${String(i + 1).padStart(2, '0')}</span><svg class="step__icon" aria-hidden="true"><use href="#${esc(s.icon || 'flor')}"/></svg></div><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></article>`));
       text('.step--cta .eyebrow', `Instagram · @${S.instagram}`);
       set('.step--cta h3', rich(P.ctaTitle));
       text('.step--cta > p:not(.eyebrow)', P.ctaText);
@@ -187,7 +207,7 @@
       });
       const speeds = [-6, 6, -3];
       set('.table', cols.map((col, ci) => (col.length ? `<div class="table__col" data-speed="${speeds[ci]}">${col.map(([r, i]) =>
-        `<figure class="napkin${r.big ? ' napkin--big' : ''}" style="--r:${ROT[i % ROT.length]}deg"><span class="napkin__stars" role="img" aria-label="5 de 5">${flor5}</span><blockquote>“${esc(r.text)}”</blockquote><figcaption><b>${esc(r.name)}</b><span>Opinión en Google</span></figcaption><img class="napkin__logo" src="assets/img/logo-royal.png" alt="" loading="lazy" decoding="async"></figure>`).join('')}</div>` : '')).join(''));
+        `<figure class="napkin${r.big ? ' napkin--big' : ''}" style="--r:${ROT[i % ROT.length]}deg"><span class="napkin__stars" role="img" aria-label="5 de 5">${flor5}</span><blockquote>“${esc(r.text)}”</blockquote><figcaption><b>${esc(r.name)}</b><span>Opinión en Google</span></figcaption><svg class="napkin__logo" aria-hidden="true"><use href="#logo"/></svg></figure>`).join('')}</div>` : '')).join(''));
     }
 
     /* Visítanos + horario */
@@ -205,6 +225,38 @@
         <div><span class="eyebrow">Pedidos</span><a href="https://wa.me/${esc(S.whatsapp)}" target="_blank" rel="noopener" class="ulink">WhatsApp ${esc(S.phone)}</a><br><a href="mailto:${esc(S.email)}" class="ulink">${esc(S.email)}</a></div>
         <div><span class="eyebrow">Síguenos</span><a href="https://www.instagram.com/${esc(S.instagram)}" target="_blank" rel="noopener" class="ulink">Instagram @${esc(S.instagram)}</a></div>`);
 
+    const yr = q('[data-year]');
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    /* Eventos */
+    const E = D.events;
+    if (E && q('#eventos')) {
+      set('.events .eyebrow', `<svg class="eyebrow__flor" aria-hidden="true"><use href="#flor"/></svg> ${esc(E.eyebrow)}`);
+      set('.events .title', rich(E.title));
+      text('.events__text', E.text);
+      set('.events__points', (E.points || []).map((t) => `<li>${icon('flor')}${esc(t)}</li>`).join(''));
+      const ec = q('.events__cta');
+      if (ec) { ec.href = `https://wa.me/${S.whatsapp}?text=${encodeURIComponent(E.waMessage || '')}`; q('.btn__label', ec).textContent = E.cta; }
+      set('.events__track', (E.media || []).map((m, i) => `<figure class="slide" data-i="${i}">
+        <div class="slide__media">${m.type === 'video'
+          ? `<video src="${esc(m.src)}"${m.poster ? ` poster="${esc(m.poster)}"` : ''} muted loop playsinline preload="none" aria-label="${esc(m.alt)}"></video><span class="slide__play" aria-hidden="true"><svg><use href="#i-play"/></svg></span>`
+          : img(m.src, m.alt, '(max-width: 700px) 78vw, (max-width: 1100px) 42vw, 30vw', '', ' draggable="false"')}</div>
+        ${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ''}</figure>`).join(''));
+    }
+
+    /* Franquicias */
+    const F = D.franchise;
+    if (F && q('#franquicias')) {
+      set('.franchise .eyebrow', esc(F.eyebrow));
+      set('.franchise .title', rich(F.title));
+      text('.franchise__text', F.text);
+      set('.franchise__points', (F.points || []).map((pt, i) => `<li><span class="franchise__n">${String(i + 1).padStart(2, '0')}</span><div><h3>${esc(pt.title)}</h3><p>${esc(pt.text)}</p></div></li>`).join(''));
+      text('.franchise__form-title', F.formTitle);
+      text('.franchise__send .btn__label', F.cta);
+      const fm = q('.franchise__mail');
+      if (fm) fm.href = `mailto:${S.email}?subject=${encodeURIComponent('Franquicias Le Pavlove')}`;
+    }
+
     /* Enlaces sueltos (botones, WhatsApp flotante…) */
     qa('a[href*="wa.me/"]').forEach((a) => {
       if (a.id === 'waRetry') return;
@@ -212,6 +264,7 @@
       a.setAttribute('href', `https://wa.me/${S.whatsapp}` + (h.includes('?') ? `?text=${encodeURIComponent(S.waMessage || '')}` : ''));
     });
     qa('a[href*="share.google"]').forEach((a) => a.setAttribute('href', S.reviewsUrl));
+    qa('a[href^="mailto:"]').forEach((a) => { if (!a.classList.contains('franchise__mail')) { a.setAttribute('href', `mailto:${S.email}`); if (a.textContent.includes('@')) a.textContent = S.email; } });
 
     /* Tienda */
     const SH = D.shop;
@@ -247,21 +300,22 @@
   }
 
   /* ---------- Carta: HTML de cada pestaña ---------- */
-  const item = (it) => `<li class="item"${it.img ? ` data-img="${esc(it.img)}"${it.png ? ' data-png' : ''}` : ''}><div class="item__row"><span class="item__name">${esc(it.name)}${it.note ? ` <small>${esc(it.note)}</small>` : ''}</span><span class="item__line"></span><span class="item__price">${esc(it.price)}</span></div></li>`;
+  const item = (it) => `<li class="item"${it.img ? ` data-img="${esc(small(it.img))}"${it.png ? ' data-png' : ''}` : ''}><div class="item__row"><span class="item__name">${esc(it.name)}${it.note ? ` <small>${esc(it.note)}</small>` : ''}</span><span class="item__line"></span><span class="item__price">${esc(it.price)}</span></div></li>`;
   const group = (g) => `<h3 class="group">${icon(g.icon)}${esc(g.title)}</h3>`
     + (g.note ? `<p class="extras__note">${esc(g.note)}</p>` : '')
     + (g.style === 'toppings'
       ? `<ul class="toppings">${(g.items || []).map((i) => `<li><span>${esc(i.name)}</span><b>${esc(i.price)}</b></li>`).join('')}</ul>`
       : `<ul class="items">${(g.items || []).map(item).join('')}</ul>`)
     + (g.beans ? `<div class="beans"><p class="beans__title">${esc(g.beans.title)}</p><p class="chips chips--solid">${(g.beans.chips || []).map((c) => `<span>${esc(c)}</span>`).join('')}</p></div>` : '');
+  const CARD = '(max-width: 700px) 42vw, (max-width: 1024px) 46vw, 23vw';
   function panelHtml(c, i) {
     const open = `<div class="panel${i ? '' : ' is-active'}" role="tabpanel" id="p-${esc(c.id)}" aria-labelledby="t-${esc(c.id)}"${i ? ' hidden' : ''}>`;
     if (c.layout === 'cards') {
       return open + (c.intro ? `<p class="panel__desc">${rich(c.intro)}</p>` : '') + `<div class="prods">${(c.items || []).map((p) => `
         <article class="prod${p.star ? ' prod--star' : ''}"${p.photo ? ' data-photo' : ''}>
           <div class="prod__art${p.photoOnly ? ' prod__art--photo' : ''}">
-            <img class="prod__ill" src="${esc(p.ill)}" alt="${esc(p.photoOnly ? 'Foto real: ' : 'Ilustración de ')}${esc(p.name)}" loading="lazy" decoding="async">
-            ${p.photo ? `<img class="prod__photo" src="${esc(p.photo)}" alt="Foto real: ${esc(p.name)}" loading="lazy" decoding="async"><button class="prod__flip" type="button" aria-pressed="false">Ver foto</button>` : ''}
+            ${img(p.ill, (p.photoOnly ? 'Foto: ' : 'Ilustración de ') + p.name, CARD, 'prod__ill')}
+            ${p.photo ? `${img(p.photo, 'Foto: ' + p.name, CARD, 'prod__photo')}<button class="prod__flip" type="button" aria-pressed="false">Ver foto</button>` : ''}
           </div>
           <div class="prod__body">
             <h3 class="prod__name">${esc(p.name)}${p.size ? ` <small>${esc(p.size)}</small>` : ''}</h3>
@@ -275,7 +329,7 @@
       .map((a) => `<div>${a.map(group).join('')}</div>`).join('');
     const f = c.feature;
     return open + (c.intro ? `<p class="panel__desc">${rich(c.intro)}</p>` : '') + (f
-      ? `<div class="drinks"><figure class="feature"><div class="feature__img"><img src="${esc(f.img)}" alt="${esc(f.title)}" loading="lazy" decoding="async"></div><figcaption><span class="feature__title">${esc(f.title)}</span><span class="feature__text">${esc(f.text)}</span></figcaption></figure><div class="drinks__lists">${cols}</div></div>`
+      ? `<div class="drinks"><figure class="feature"><div class="feature__img">${img(f.img, f.title, '(max-width: 700px) 120px, (max-width: 1024px) 180px, 30vw')}</div><figcaption><span class="feature__title">${esc(f.title)}</span><span class="feature__text">${esc(f.text)}</span></figcaption></figure><div class="drinks__lists">${cols}</div></div>`
       : `<div class="extras">${cols}</div>`) + '</div>';
   }
 
@@ -284,7 +338,7 @@
     if (PREVIEW) {
       try { const d = JSON.parse(localStorage.getItem('lp-draft')); if (d) return Promise.resolve(d); } catch (e) { /* sin borrador */ }
     }
-    return fetch('data/content.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+    return fetch('data/content.json').then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
   };
 
   LP.ready = load().then((D) => {
@@ -308,8 +362,11 @@
     // Fotos recién subidas que aún no están publicadas
     let pending = {};
     try { pending = window.parent.__lpPending || {}; } catch (e) { /* sin padre */ }
-    const fix = (img) => { const s = img.getAttribute('src'); if (s && pending[s]) img.src = pending[s]; };
-    const sweep = () => qa('img').forEach(fix);
+    const fix = (im) => {
+      const s = (im.getAttribute('src') || '').replace(/-(480|960)\.webp$/, '.webp');
+      if (pending[s] && im.getAttribute('src') !== pending[s]) { im.removeAttribute('srcset'); im.src = pending[s]; }
+    };
+    const sweep = () => qa('img, video').forEach(fix);
     sweep();
     new MutationObserver(sweep).observe(document.body, { childList: true, subtree: true });
   }

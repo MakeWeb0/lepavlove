@@ -60,6 +60,107 @@
   const hero = $('.hero');
   if (wa && hero) new IntersectionObserver(([e]) => wa.classList.toggle('is-visible', !e.isIntersecting), { threshold: 0.15 }).observe(hero);
 
+  /* ---------- Eventos: carrusel de fotos y vídeos ---------- */
+  (() => {
+    const track = $('.events__track');
+    if (!track) return;
+    const bar = $('.events__bar span');
+    const prev = $('.events__arrow[data-dir="-1"]');
+    const next = $('.events__arrow[data-dir="1"]');
+    const update = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      const p = max > 0 ? track.scrollLeft / max : 1;
+      const vis = Math.min(1, track.clientWidth / track.scrollWidth);
+      bar.style.transform = `scaleX(${vis + (1 - vis) * p})`;
+      prev.disabled = track.scrollLeft < 4;
+      next.disabled = track.scrollLeft > max - 4;
+    };
+    const step = (dir) => {
+      const s = $('.slide', track);
+      const w = s ? s.getBoundingClientRect().width + (parseFloat(getComputedStyle(track).columnGap) || 20) : track.clientWidth * 0.8;
+      track.scrollBy({ left: dir * w, behavior: reduce ? 'auto' : 'smooth' });
+    };
+    prev.addEventListener('click', () => step(-1));
+    next.addEventListener('click', () => step(1));
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+    });
+    track.addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    update();
+
+    // Arrastrar con el ratón (en táctil ya se desliza solo)
+    if (fine) {
+      let down = false; let x0 = 0; let s0 = 0;
+      track.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse' || e.button !== 0) return; down = true; x0 = e.clientX; s0 = track.scrollLeft; });
+      addEventListener('pointermove', (e) => {
+        if (!down) return;
+        const dx = e.clientX - x0;
+        if (Math.abs(dx) > 4) track.classList.add('is-drag');
+        if (track.classList.contains('is-drag')) track.scrollLeft = s0 - dx;
+      });
+      addEventListener('pointerup', () => {
+        if (!down) return;
+        down = false;
+        if (!track.classList.contains('is-drag')) return;
+        // Al soltar, que encaje en la foto más cercana
+        const left = track.scrollLeft;
+        track.classList.remove('is-drag');
+        track.scrollLeft = left;
+      });
+    }
+
+    // Los vídeos solo se reproducen cuando se ven (con "reducir movimiento", solo si se pulsan)
+    const play = (v, on) => {
+      const fig = v.closest('.slide');
+      if (on) v.play().then(() => fig.classList.add('is-playing')).catch(() => {});
+      else { v.pause(); fig.classList.remove('is-playing'); }
+    };
+    const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+      if (!reduce) play(en.target, en.intersectionRatio > 0.6);
+      else if (en.intersectionRatio === 0) play(en.target, false);
+    }), { threshold: [0, 0.6] });
+    $$('video', track).forEach((v) => {
+      io.observe(v);
+      v.closest('.slide__media').addEventListener('click', () => play(v, v.paused));
+    });
+  })();
+
+  /* ---------- Franquicias: el formulario prepara un WhatsApp ---------- */
+  (() => {
+    const form = $('#franchiseForm');
+    if (!form) return;
+    const msgEl = $('.franchise__error', form);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = (n) => form.elements[n].value.trim();
+      const problems = [];
+      if (!v('nombre')) problems.push('Escribe tu nombre.');
+      if (!v('ciudad')) problems.push('Dinos en qué ciudad.');
+      if (!/^[0-9 +]{9,15}$/.test(v('tel'))) problems.push('Escribe un teléfono válido.');
+      if (v('email') && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('email'))) problems.push('Revisa el email.');
+      msgEl.className = 'franchise__error';
+      msgEl.hidden = !problems.length;
+      msgEl.textContent = problems.join(' ');
+      if (problems.length) return;
+      const D = (window.LP && window.LP.data) || {};
+      const wa = (D.site && D.site.whatsapp) || '34642882027';
+      const msg = [
+        '¡Hola, Le Pavlove! Me interesa la franquicia.',
+        `Nombre: ${v('nombre')}`,
+        `Ciudad: ${v('ciudad')}`,
+        `Teléfono: ${v('tel')}`,
+        v('email') ? `Email: ${v('email')}` : '',
+        v('msg') ? `Mi idea: ${v('msg')}` : '',
+      ].filter(Boolean).join('\n');
+      window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+      msgEl.hidden = false;
+      msgEl.className = 'franchise__ok';
+      msgEl.textContent = 'Se ha abierto WhatsApp con tus datos: solo falta pulsar enviar.';
+    });
+  })();
+
   const loader = $('.loader');
   if (!window.gsap) { // sin GSAP (CDN caída) la web sigue siendo usable
     loader && loader.remove();
@@ -316,6 +417,18 @@
     });
     gsap.from('.note figcaption', { y: 16, autoAlpha: 0, duration: 1, stagger: 0.14, delay: 0.5, ease, scrollTrigger: { trigger: '.notes__row', start: 'top 85%' } });
     }
+
+    // Eventos y franquicias
+    if ($('.events')) {
+      gsap.from('.slide', { y: 80, autoAlpha: 0, duration: 1.3, stagger: 0.08, ease, scrollTrigger: { trigger: '.events__track', start: 'top 88%' } });
+      gsap.from('.events__points li', { x: -20, autoAlpha: 0, duration: 0.9, stagger: 0.07, ease, scrollTrigger: { trigger: '.events__points', start: 'top 90%' } });
+    }
+    if ($('.franchise')) {
+      gsap.from('.franchise__logo', { y: 30, autoAlpha: 0, duration: 1.2, ease, scrollTrigger: { trigger: '.franchise', start: 'top 75%' } });
+      gsap.from('.franchise__points li', { y: 30, autoAlpha: 0, duration: 1, stagger: 0.1, ease, scrollTrigger: { trigger: '.franchise__points', start: 'top 88%' } });
+      gsap.from('.franchise__form', { y: 60, autoAlpha: 0, duration: 1.3, ease, clearProps: 'transform,opacity,visibility', scrollTrigger: { trigger: '.franchise__form', start: 'top 88%' } });
+    }
+    $$('.brandmark').forEach((b) => gsap.from(b, { y: 16, autoAlpha: 0, duration: 1.1, ease, scrollTrigger: { trigger: b, start: 'top 92%' } }));
 
     // Visítanos
     if ($('.hours')) gsap.from('.hours > div', { x: -20, autoAlpha: 0, duration: 0.8, stagger: 0.05, ease, scrollTrigger: { trigger: '.hours', start: 'top 88%' } });
