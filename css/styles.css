@@ -1,11 +1,4 @@
-/* =========================================================
-   Le Pavlove Patisserie
-   Personalidad basada en "brand-antojo": azul royal a sangre,
-   dibujo de línea gruesa marfil y titulares condensados con
-   remate en cursiva.
-   ========================================================= */
 :root {
-  /* Manual de marca: Royal Blue, Warm Ivory y Navy Blue */
   --royal: #1518b0;
   --royal-deep: #0f1290;
   --ivory: #f2e9d5;
@@ -13,7 +6,7 @@
   --cream: #faf5ea;
   --navy: #1f2149;
   --ink: #1f2149;
-  --ink-2: #44476e;            /* texto secundario, contraste AA sobre crema */
+  --ink-2: #44476e;
   --line: rgba(21, 24, 176, .16);
   --line-ivory: rgba(242, 233, 213, .28);
 
@@ -44,7 +37,6 @@ em { font-style: italic; }
 strong { font-weight: 500; }
 ::selection { background: var(--royal); color: var(--ivory); }
 
-/* Foco visible: azul sobre fondos claros, marfil sobre fondos azules */
 :focus-visible { outline: 2px solid var(--royal); outline-offset: 4px; border-radius: 6px; }
 .hero :focus-visible, .about :focus-visible, .gallery :focus-visible, .reviews :focus-visible,
 .footer :focus-visible, .menu :focus-visible, .nav :focus-visible, .step--cta :focus-visible { outline-color: var(--ivory); }
@@ -55,7 +47,6 @@ body.menu-open .nav :focus-visible { outline-color: var(--ivory); }
 .skip:focus { top: 12px; }
 .container { width: 100%; max-width: 1320px; margin-inline: auto; padding-inline: var(--gutter); }
 
-/* ---------- Tipografía ---------- */
 .eyebrow {
   display: inline-flex; align-items: center; gap: 12px;
   font-size: 12px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--ivory);
@@ -75,10 +66,8 @@ body.menu-open .nav :focus-visible { outline-color: var(--ivory); }
 @media (hover: hover) { .more:hover span { transform: translateX(6px); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ---------- Dibujos de línea ---------- */
 .doodle { position: absolute; pointer-events: none; color: var(--ivory); }
 
-/* ---------- Botones ---------- */
 .btn {
   --bg: var(--royal); --fg: var(--ivory); --bd: var(--royal); --fill: var(--royal-deep); --fg-h: var(--ivory);
   position: relative; display: inline-flex; align-items: center; gap: 10px;
@@ -87,7 +76,6 @@ body.menu-open .nav :focus-visible { outline-color: var(--ivory); }
   font-size: 15px; font-weight: 500; letter-spacing: .01em;
   transition: color .5s var(--ease), border-color .5s var(--ease);
 }
-/* Hover de marca: brota la flor y el color se expande desde ella */
 .btn__fill { position: absolute; z-index: -1; left: 30px; top: 50%; width: 12px; height: 12px; border-radius: 50%; background: var(--fill); transform: translate(-50%, -50%) scale(0); transition: transform .75s var(--ease); pointer-events: none; }
 .btn__bloom { position: absolute; left: 12px; top: 50%; width: 22px; height: 22px; margin-top: -11px; pointer-events: none; }
 .btn--lead .btn__bloom { left: 27px; }
@@ -110,7 +98,6 @@ body.menu-open .nav :focus-visible { outline-color: var(--ivory); }
 .btn--ghost { --bg: transparent; --fg: var(--ivory); --bd: var(--line-ivory); --fill: var(--ivory); --fg-h: var(--royal); }
 .btn--royal { --bg: var(--royal); --fg: var(--ivory); --bd: var(--royal); --fill: var(--ivory); --fg-h: var(--royal); }
 
-/* Pétalos al pulsar */
 .petal { position: fixed; z-index: 400; width: 8px; height: 14px; margin: -7px 0 0 -4px; border-radius: 50%; border: 1.5px solid var(--royal); background: var(--ivory); pointer-events: none; }
 .btn--sm { height: 44px; padding: 0 20px; font-size: 14px; }
 
@@ -118,16 +105,10 @@ body.menu-open .nav :focus-visible { outline-color: var(--ivory); }
 .motion-btn[aria-pressed="true"] { background: var(--ivory); color: var(--royal); }
 @media (hover: hover) { .motion-btn:hover { background: var(--ivory); color: var(--royal); } }
 
-/* =========================================================
-   LOADER
-   ========================================================= */
 .loader { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: var(--royal); color: var(--ivory); }
 .loader__flor { position: absolute; width: 104px; height: 104px; }
 .loader__logo { position: relative; width: min(300px, 64vw); aspect-ratio: 361.8 / 108.8; opacity: 0; color: var(--ivory); }
 
-/* =========================================================
-   NAV
-   ========================================================= */
 .nav {
   position: fixed; inset: 0 0 auto; z-index: 90;
   display: flex; align-items: center; justify-content: space-between; padding: 18px var(--gutter);
@@ -156,7 +137,6 @@ body.menu-open .nav :focus-visible { outline-color: var(--ivory); }
 .nav.is-solid .burger__line { background: var(--ivory); }
 body.menu-open .burger__line, body.menu-open .burger__shape { transition: none; }
 
-/* Menú abierto: mismas reglas con más especificidad que .is-solid */
 body.menu-open .nav,
 body.menu-open .nav.is-solid { background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; transform: none; }
 body.menu-open .nav .nav__logo-svg,
@@ -167,9 +147,6 @@ body.menu-open .nav .burger__line,
 body.menu-open .nav.is-solid .burger__line { background: var(--royal); }
 body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 
-/* =========================================================
-   MENÚ
-   ========================================================= */
 .menu { position: fixed; inset: 0; z-index: 80; visibility: hidden; pointer-events: none; }
 .menu.is-open { pointer-events: auto; }
 .menu__bg { --r: 0%; --cx: calc(100% - 50px); --cy: 44px; position: absolute; inset: 0; overflow: hidden; background-color: var(--royal); background-image: url("../assets/img/marca/monograma-ivory.svg"); background-size: 160px 160px; clip-path: circle(var(--r) at var(--cx) var(--cy)); }
@@ -182,7 +159,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .menu__frame img.is-active { opacity: 1; }
 .menu__nav { align-self: center; }
 .menu__link { position: relative; display: flex; align-items: center; gap: 22px; padding: 8px 0; transition: opacity .4s var(--ease); }
-/* Los subrayados se dibujan con el timeline del menú (--ul), después de que entre el texto */
 .menu__link::after, .menu__foot::before { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: var(--line-ivory); transform: scaleX(var(--ul, 0)); transform-origin: left center; pointer-events: none; }
 .menu__link::after { bottom: 0; }
 .menu__foot::before { top: 0; }
@@ -202,9 +178,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .menu__foot .eyebrow { display: block; opacity: .8; font-size: 11px; margin-bottom: 4px; }
 .menu__foot a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-/* =========================================================
-   HERO — composición de "brand-antojo"
-   ========================================================= */
 .hero {
   position: relative; min-height: 100svh; overflow: hidden;
   display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: clamp(30px, 5vw, 90px);
@@ -228,15 +201,11 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .hero__tag { position: absolute; left: 18px; bottom: 22px; right: 70px; font-size: 13px; color: var(--ivory); text-shadow: 0 1px 10px rgba(0, 0, 0, .45); }
 .hero__ilu { grid-column: 1 / -1; justify-self: center; position: relative; z-index: 1; width: min(860px, 82vw); margin-top: clamp(-80px, -6vw, -30px); pointer-events: none; }
 .hero .btn--ghost { --bg: var(--royal); }
-/* La ilustración se funde con el azul en lugar de quedar cortada en seco */
 .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: clamp(120px, 18vh, 200px); z-index: 2; pointer-events: none; background: linear-gradient(to bottom, rgba(20, 24, 182, 0) 0%, rgba(20, 24, 182, .85) 65%, var(--royal) 100%); }
 .doodle--1 { width: 64px; height: 64px; right: 7%; top: 18%; z-index: 2; }
 .doodle--2 { width: 58px; height: 58px; left: 50%; top: 17%; z-index: 2; }
 .doodle--3 { width: 70px; height: 70px; right: 5%; bottom: 20%; z-index: 2; }
 
-/* =========================================================
-   SOBRE NOSOTROS (azul)
-   ========================================================= */
 .about { position: relative; overflow: hidden; background: var(--royal); color: var(--ivory); padding: clamp(100px, 12vw, 160px) 0 clamp(90px, 10vw, 140px); }
 .about__grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(40px, 7vw, 110px); align-items: center; }
 .about__photos { position: relative; padding-bottom: 60px; }
@@ -251,10 +220,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .about__text p:not(.eyebrow) { color: var(--ivory-2); font-size: 18px; }
 .about__text .more { margin-top: 6px; color: var(--ivory); }
 
-
-/* =========================================================
-   CARTA — un menú impreso sobre papel de seda
-   ========================================================= */
 .carta {
   position: relative; padding: clamp(90px, 10vw, 140px) 0;
   background-color: var(--ivory);
@@ -278,7 +243,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .carta__doodle--l { left: 4%; transform: rotate(-12deg); }
 .carta__doodle--r { right: 4%; transform: rotate(10deg); }
 
-/* Pestañas en píldora */
 .tabs-wrap { display: flex; justify-content: center; margin: 44px 0 50px; }
 .tabs { position: relative; display: inline-flex; gap: 2px; padding: 6px; border: 1px solid var(--royal); border-radius: 999px; background: #fff; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
@@ -291,7 +255,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .panel[hidden] { display: none; }
 .panel__desc { max-width: 760px; margin: 0 auto 40px; text-align: center; font-family: var(--serif); font-size: clamp(22px, 1.9vw, 28px); line-height: 1.3; color: var(--royal); }
 
-/* Fichas de producto (pavlovas y CupLovas) */
 .prods { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 2vw, 28px); }
 .prod { display: flex; flex-direction: column; background: #f8efdc; border-radius: 26px; padding: 14px 14px 22px; transition: box-shadow .6s var(--ease); }
 @media (hover: hover) { .prod:hover { box-shadow: 0 30px 50px -30px rgba(14, 17, 144, .45); } }
@@ -313,7 +276,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .chips span { padding: 4px 11px; border-radius: 999px; border: 1px solid rgba(20, 24, 182, .25); background: #fffdf8; font-size: 12.5px; font-weight: 500; color: var(--royal); font-variant-numeric: lining-nums; }
 .chips--solid span { background: var(--royal); color: var(--ivory); border-color: var(--royal); }
 
-/* Bebidas: foto destacada + listas */
 .drinks { display: grid; grid-template-columns: .8fr 1.6fr; gap: clamp(30px, 5vw, 70px); align-items: start; }
 .feature { position: sticky; top: 110px; }
 .feature__img { aspect-ratio: 4 / 5; border-radius: 999px 999px 22px 22px; overflow: hidden; background: var(--ivory); }
@@ -341,7 +303,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .beans { margin-top: 34px; padding: 20px 22px; border-radius: 20px; background: #f8efdc; }
 .beans__title { margin-bottom: 10px; font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--royal); }
 
-/* Extras: toppings como etiquetas */
 .extras { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(30px, 5vw, 80px); }
 .extras__note { margin-bottom: 18px; color: var(--ink-2); }
 .toppings { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -366,9 +327,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .item__thumb.is-png img { object-fit: contain; padding: 14px; }
 .item.is-open .item__thumb { max-height: 230px; margin-top: 12px; }
 
-/* =========================================================
-   GALERÍA 3D (azul)
-   ========================================================= */
 .gallery { position: relative; overflow: hidden; background: var(--royal); color: var(--ivory); padding: clamp(100px, 11vw, 150px) 0 70px; }
 .gallery__ilu { position: absolute; left: 50%; bottom: -10%; width: min(1100px, 120vw); transform: translateX(-50%); opacity: .12; pointer-events: none; }
 .gallery__head { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center; }
@@ -391,9 +349,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .gallery__hint { display: flex; align-items: center; gap: 14px; font-size: 12px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; }
 .gallery__hint span { width: 36px; height: 1px; background: currentColor; }
 
-/* =========================================================
-   CÓMO TRABAJAMOS (crema)
-   ========================================================= */
 .process { background: var(--cream); }
 .process__pin { height: 100vh; display: flex; flex-direction: column; padding-top: 104px; overflow: hidden; }
 .process__top { display: flex; align-items: center; justify-content: space-between; gap: 30px; }
@@ -422,9 +377,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .step__flor { position: absolute; top: -40px; right: -70px; width: 300px; height: 300px; color: rgba(244, 231, 206, .16); animation: spin 32s linear infinite; }
 .step__ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 
-/* =========================================================
-   RESEÑAS — servilletas sobre la mesa azul
-   ========================================================= */
 .reviews { position: relative; overflow: hidden; background: var(--royal); color: var(--ivory); padding: clamp(100px, 12vw, 160px) 0 clamp(110px, 12vw, 170px); }
 .doodle--5 { width: 80px; height: 80px; right: 6%; top: 70px; }
 .doodle--6 { width: 60px; height: 60px; left: 3%; bottom: 90px; }
@@ -464,9 +416,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .napkin figcaption span { font-size: 13px; color: var(--ink-2); }
 .napkin__logo { position: absolute; right: 26px; bottom: 24px; width: 72px; aspect-ratio: 361.8 / 108.8; color: var(--royal); opacity: .85; }
 
-/* =========================================================
-   VISÍTANOS (marfil)
-   ========================================================= */
 .visit { background: var(--ivory); padding: clamp(100px, 11vw, 150px) 0; }
 .visit__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 90px); align-items: center; }
 .visit__info { display: flex; flex-direction: column; gap: 24px; }
@@ -486,9 +435,6 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .map__pin { width: 70px; height: 70px; }
 .map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-/* =========================================================
-   FOOTER (azul)
-   ========================================================= */
 .footer { position: relative; overflow: hidden; background: var(--royal); color: var(--ivory); padding: clamp(90px, 10vw, 130px) 0 30px; }
 .footer__top { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
 .footer__title { font-family: var(--serif); font-size: clamp(48px, 6.6vw, 104px); line-height: .95; letter-spacing: -.02em; max-width: 13ch; }
@@ -503,15 +449,11 @@ body.menu-open .nav__cta { opacity: 0; pointer-events: none; }
 .footer__bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 22px; border-top: 1px solid var(--line-ivory); font-size: 14px; }
 .footer__legal { display: flex; gap: 22px; flex-wrap: wrap; }
 
-/* WhatsApp fijo (móvil) */
 .wa-float { position: fixed; right: 16px; bottom: 16px; z-index: 70; width: 58px; height: 58px; display: none; place-items: center; border-radius: 50%; background: var(--royal); color: var(--ivory); box-shadow: 0 14px 30px -10px rgba(14, 17, 144, .6); border: 2px solid var(--ivory); transform: scale(0); transition: transform .5s var(--ease); }
 .wa-float svg { width: 28px; height: 28px; }
 .wa-float.is-visible { transform: scale(1); }
 body.menu-open .wa-float { transform: scale(0); }
 
-/* =========================================================
-   PÁGINAS LEGALES
-   ========================================================= */
 .legal { max-width: 820px; margin: 0 auto; padding: 150px var(--gutter) 110px; }
 .legal h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(44px, 6vw, 80px); line-height: 1; letter-spacing: -.02em; color: var(--royal); margin-bottom: 30px; }
 .legal h2 { font-family: var(--serif); font-weight: 400; font-size: 30px; color: var(--royal); margin: 40px 0 12px; }
@@ -522,9 +464,6 @@ body.menu-open .wa-float { transform: scale(0); }
 .legal__back { display: inline-flex; margin-top: 40px; }
 .page-legal .nav { background: var(--royal); }
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
 @media (max-width: 1024px) {
   .about__grid, .visit__grid { grid-template-columns: 1fr; }
   .prods { grid-template-columns: repeat(2, 1fr); }
@@ -587,11 +526,9 @@ body.menu-open .wa-float { transform: scale(0); }
 .footer--legal { padding: 30px 0; }
 .footer--legal .footer__bottom { border-top: 0; padding-top: 0; }
 .page-legal .nav { background: var(--royal); padding-block: 14px; }
-/* Precios alineados en todas las fichas */
 .prod .chips { min-height: 60px; align-content: flex-start; }
 .prod__desc { flex: 1; }
 .prod__price { margin-top: 4px; }
-/* Carta en móvil: fichas horizontales */
 @media (max-width: 700px) {
   .prods { grid-template-columns: 1fr; }
   .prod { flex-direction: row; gap: 14px; padding: 10px; }
@@ -602,7 +539,6 @@ body.menu-open .wa-float { transform: scale(0); }
   .prod__flip { bottom: 8px; font-size: 11px; padding: 5px 10px; }
 }
 
-/* Reseñas en tablet y móvil */
 @media (max-width: 1024px) {
   .table { grid-template-columns: 1fr 1fr; }
   .table__col:nth-child(3) { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: inherit; margin-top: 0; }
@@ -617,20 +553,15 @@ body.menu-open .wa-float { transform: scale(0); }
 .reviews__head .score { flex: none; }
 @media (max-width: 700px) { .doodle--5 { display: none; } }
 
-/* En escritorio, frase y datos del menú a la izquierda: la ilustración ocupa la derecha */
 @media (min-width: 1025px) {
   .menu__quote, .menu__foot { grid-column: 1 / 2; }
   .menu__foot { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 30px; }
 }
 
-/* =========================================================
-   TIENDA ONLINE
-   ========================================================= */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .carta__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
 .btn--line { --bg: transparent; --fg: var(--royal); --bd: rgba(20, 24, 182, .35); --fill: var(--royal); --fg-h: var(--ivory); }
 
-/* Botón del carrito en la barra */
 .nav__cart { position: relative; display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px 0 16px; border-radius: 999px; background: var(--ivory); color: var(--royal); font-size: 14px; font-weight: 500; transition: background .4s, color .4s, transform .4s var(--ease); }
 .nav__cart svg { width: 20px; height: 20px; }
 .nav__count { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 999px; background: var(--royal); color: var(--ivory); font-size: 12px; font-variant-numeric: lining-nums; }
@@ -639,7 +570,6 @@ body.menu-open .wa-float { transform: scale(0); }
 body.menu-open .nav__cart { opacity: 0; pointer-events: none; }
 @media (hover: hover) { .nav__cart:hover { transform: translateY(-2px); } }
 
-/* Cabecera de la tienda */
 .page-hero { position: relative; overflow: hidden; background: var(--royal); color: var(--ivory); padding: 150px 0 clamp(170px, 20vw, 260px); }
 .page-hero__grid { position: relative; z-index: 3; display: grid; grid-template-columns: 1.2fr .8fr; gap: clamp(30px, 6vw, 90px); align-items: end; }
 .page-hero__title { font-family: var(--serif); font-weight: 400; font-size: clamp(54px, 7.4vw, 120px); line-height: .95; letter-spacing: -.025em; margin: 22px 0 24px; }
@@ -656,7 +586,6 @@ body.menu-open .nav__cart { opacity: 0; pointer-events: none; }
 .page-hero .doodle--1 { right: 8%; top: 22%; }
 .page-hero .doodle--2 { left: 46%; top: 18%; }
 
-/* Productos */
 .shop { position: relative; overflow: hidden; padding: 150px 0 clamp(80px, 9vw, 130px); background-color: var(--royal); color: var(--ivory);
   background-image: url("../assets/img/marca/monograma-ivory.svg");
   background-size: 160px 160px; }
@@ -706,7 +635,6 @@ body.menu-open .nav__cart { opacity: 0; pointer-events: none; }
 .qty output { min-width: 28px; text-align: center; font-weight: 500; font-variant-numeric: lining-nums tabular-nums; }
 .qty--sm button { width: 30px; height: 30px; font-size: 16px; }
 
-/* Info */
 .shop-info { background: var(--royal); padding: 0 0 clamp(80px, 9vw, 120px); }
 .shop-info__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .info-card { padding: 30px 28px; border-radius: 24px; background: rgba(244, 231, 206, .08); border: 1px solid var(--line-ivory); color: var(--ivory); }
@@ -715,7 +643,6 @@ body.menu-open .nav__cart { opacity: 0; pointer-events: none; }
 .info-card p { color: var(--ivory-2); font-size: 15.5px; }
 .info-card a { color: var(--ivory); }
 
-/* Carrito */
 html.cart-lock { overflow: hidden; }
 .cart { position: fixed; inset: 0; z-index: 150; visibility: hidden; }
 .cart.is-open { visibility: visible; }
@@ -772,7 +699,6 @@ html.cart-lock { overflow: hidden; }
 .cart__done-small a { color: var(--royal); }
 .cart__done .btn { margin-top: 10px; }
 
-/* Botón flotante (móvil) */
 .cart-fab { position: fixed; left: 16px; right: 16px; bottom: 14px; z-index: 70; display: none; align-items: center; gap: 10px; height: 58px; padding: 0 18px; border-radius: 999px; background: var(--royal); color: var(--ivory); border: 2px solid var(--ivory); box-shadow: 0 16px 34px -12px rgba(14, 17, 144, .6); font-weight: 500; }
 .cart-fab svg { width: 22px; height: 22px; }
 .cart-fab b { margin-left: auto; font-family: var(--serif); font-weight: 400; font-size: 24px; font-variant-numeric: lining-nums; }
@@ -803,10 +729,6 @@ body.menu-open .cart-fab { display: none; }
   .order__row { grid-template-columns: 1fr; }
 }
 
-/* =========================================================
-   CONTENIDO EDITABLE + AVISO
-   ========================================================= */
-/* Mientras llega data/content.json el contenido no se pinta (máx. 2,5 s) */
 .lp-wait main, .lp-wait .footer, .lp-wait .nav { visibility: hidden; }
 
 .notice {
@@ -825,18 +747,12 @@ body.menu-open .notice { display: none; }
 @media (max-width: 760px) { .notice { top: 82px; border-radius: 22px; } }
 @media (prefers-reduced-motion: reduce) { .notice { animation: none; } }
 
-/* =========================================================
-   MARCA EN LOS BLOQUES AZULES
-   ========================================================= */
 .brandmark { display: block; width: clamp(116px, 10vw, 150px); aspect-ratio: 361.8 / 108.8; color: var(--ivory); }
 .brandmark--center { margin-inline: auto; }
 .about__text .brandmark { margin-bottom: 4px; }
 .reviews__head .brandmark { margin-bottom: 22px; }
 .step--cta .brandmark { position: relative; margin-bottom: auto; }
 
-/* =========================================================
-   EVENTOS — carrusel de fotos y vídeos
-   ========================================================= */
 .events { position: relative; overflow: hidden; background: var(--ivory); padding: clamp(100px, 11vw, 150px) 0 clamp(80px, 9vw, 120px); --padx: max(var(--gutter), calc((100vw - 1320px) / 2 + var(--gutter))); }
 .events__head { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(30px, 6vw, 90px); align-items: end; }
 .events__head .title { margin-top: 18px; max-width: 12ch; }
@@ -873,9 +789,6 @@ body.menu-open .notice { display: none; }
 .events__arrow:disabled { opacity: .3; cursor: default; }
 @media (hover: hover) { .events__arrow:not(:disabled):hover { background: var(--royal); color: var(--ivory); } }
 
-/* =========================================================
-   FRANQUICIAS
-   ========================================================= */
 .franchise { position: relative; overflow: hidden; background: var(--royal); color: var(--ivory); padding: clamp(100px, 12vw, 160px) 0; }
 .franchise :focus-visible { outline-color: var(--ivory); }
 .franchise__form :focus-visible { outline-color: var(--royal); }
@@ -915,17 +828,12 @@ body.menu-open .notice { display: none; }
   .franchise__flor { width: 380px; height: 380px; right: -150px; top: -120px; }
 }
 
-/* Transición suave entre páginas (navegadores compatibles) */
 @view-transition { navigation: auto; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 .fly { object-fit: cover; }
 .legal h2 { scroll-margin-top: 110px; }
 
-/* =========================================================
-   MONOGRAMA DE MARCA — el logo repetido en todo lo azul,
-   como el estampado de un bolso de lujo
-   ========================================================= */
 .hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader, .map, .cart__head, .page-legal .nav {
   background-image: url("../assets/img/marca/monograma-ivory.svg");
   background-size: 240px 240px;
@@ -934,16 +842,12 @@ body.menu-open .notice { display: none; }
 @media (max-width: 700px) {
   .hero, .about, .gallery, .reviews, .footer, .page-hero, .shop, .shop-info, .franchise, .step--cta, .menu__bg, .loader, .map, .cart__head, .page-legal .nav { background-size: 180px 180px; }
 }
-/* El dibujo se funde con el azul sin tapar el monograma (antes lo cortaba una franja azul lisa) */
 .hero::after, .page-hero::after { content: none; }
 .hero__ilu { -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 92%); mask-image: linear-gradient(to bottom, #000 45%, transparent 92%); }
 .page-hero__ilu { -webkit-mask-image: linear-gradient(to bottom, #000 22%, transparent 44%); mask-image: linear-gradient(to bottom, #000 22%, transparent 44%); }
-/* Sin rendija clara entre dos bloques azules seguidos */
 .hero + .about, .reviews + .franchise, .page-hero + .shop, .shop + .shop-info { margin-top: -1px; }
-/* En el pie el monograma se ve un poco más */
 .footer { background-image: url("../assets/img/marca/monograma-pie.svg"); }
 
-/* Menú: todo cabe en la pantalla, sin scroll interno (los tamaños se ajustan a la altura) */
 .menu__inner { overflow: hidden; padding-top: clamp(84px, 13vh, 120px); padding-bottom: clamp(18px, 4vh, 36px); row-gap: clamp(10px, 2.4vh, 24px); }
 .menu__txt { font-size: min(5.6vw, 7.2vh, 88px); }
 .menu__link { padding: clamp(3px, 1vh, 8px) 0; }

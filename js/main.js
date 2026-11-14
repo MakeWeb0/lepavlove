@@ -1,20 +1,14 @@
-/* =========================================================
-   Le Pavlove Patisserie — interacción y animaciones GSAP
-   ========================================================= */
 (window.LP_READY || Promise.resolve()).then(() => {
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  /* ---------- Funciones que no dependen de GSAP ---------- */
-
-  // Horario: resalta el día de hoy y dice si está abierto (las horas salen de cada fila)
   (() => {
     const rows = $$('.hours > div');
     if (!rows.length) return;
     const now = new Date();
-    const row = rows[(now.getDay() + 6) % 7]; // lunes = 0
+    const row = rows[(now.getDay() + 6) % 7];
     row.classList.add('is-today');
     const toMin = (t) => { const [h, m] = (t || '').split(':').map(Number); return h * 60 + (m || 0); };
     const from = row.dataset.open;
@@ -25,7 +19,6 @@
     out.textContent = !from ? 'Hoy estamos cerrados.' : mins >= toMin(from) && mins < toMin(to) ? 'Ahora estamos abiertos.' : mins < toMin(from) ? `Hoy abrimos a las ${from}.` : 'Ahora mismo estamos cerrados.';
   })();
 
-  // Mapa: solo se carga (y con él las cookies de Google) si se pide
   const loadMap = $('#loadMap');
   loadMap && loadMap.addEventListener('click', () => {
     const f = document.createElement('iframe');
@@ -36,7 +29,6 @@
     $('#map').replaceChildren(f);
   });
 
-  // Vídeo del hero: pausa manual y respeto a "reducir movimiento"
   const video = $('#heroVideo');
   const vBtn = $('#videoToggle');
   let userPaused = false;
@@ -55,12 +47,10 @@
     setVideoBtn();
   }
 
-  // Botón fijo de WhatsApp: aparece al pasar el hero
   const wa = $('.wa-float');
   const hero = $('.hero');
   if (wa && hero) new IntersectionObserver(([e]) => wa.classList.toggle('is-visible', !e.isIntersecting), { threshold: 0.15 }).observe(hero);
 
-  /* ---------- Eventos: carrusel de fotos y vídeos ---------- */
   (() => {
     const track = $('.events__track');
     if (!track) return;
@@ -90,7 +80,6 @@
     addEventListener('resize', update);
     update();
 
-    // Arrastrar con el ratón (en táctil ya se desliza solo)
     if (fine) {
       let down = false; let x0 = 0; let s0 = 0;
       track.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse' || e.button !== 0) return; down = true; x0 = e.clientX; s0 = track.scrollLeft; });
@@ -104,14 +93,12 @@
         if (!down) return;
         down = false;
         if (!track.classList.contains('is-drag')) return;
-        // Al soltar, que encaje en la foto más cercana
         const left = track.scrollLeft;
         track.classList.remove('is-drag');
         track.scrollLeft = left;
       });
     }
 
-    // Los vídeos solo se reproducen cuando se ven (con "reducir movimiento", solo si se pulsan)
     const play = (v, on) => {
       const fig = v.closest('.slide');
       if (on) v.play().then(() => fig.classList.add('is-playing')).catch(() => {});
@@ -127,7 +114,6 @@
     });
   })();
 
-  /* ---------- Franquicias: el formulario prepara un WhatsApp ---------- */
   (() => {
     const form = $('#franchiseForm');
     if (!form) return;
@@ -162,7 +148,7 @@
   })();
 
   const loader = $('.loader');
-  if (!window.gsap) { // sin GSAP (CDN caída) la web sigue siendo usable
+  if (!window.gsap) {
     loader && loader.remove();
     document.body.classList.remove('is-loading');
     return;
@@ -171,7 +157,6 @@
   gsap.registerPlugin(ScrollTrigger, SplitText);
   const ease = 'expo.out';
 
-  /* ---------- Scroll suave ---------- */
   let lenis = null;
   if (window.Lenis && !reduce) {
     lenis = new Lenis({ lerp: 0.09 });
@@ -193,11 +178,9 @@
     if (h.length > 1 && $(h)) { e.preventDefault(); goTo(h); }
   }));
 
-  /* ---------- Botones: flor que brota + pétalos al pulsar ---------- */
   $$('.btn').forEach((btn) => {
     if (btn.firstElementChild && btn.firstElementChild.classList.contains('btn__icon')) btn.classList.add('btn--lead');
     btn.insertAdjacentHTML('afterbegin', '<span class="btn__fill" aria-hidden="true"></span><span class="btn__bloom" aria-hidden="true"><svg><use href="#flor"/></svg></span>');
-    // El círculo de color nace justo donde brota la flor
     const setOrigin = () => { const f = btn.querySelector('.btn__fill'); const bl = btn.querySelector('.btn__bloom'); f.style.left = bl.offsetLeft + 11 + 'px'; };
     btn.addEventListener('pointerenter', setOrigin);
     btn.addEventListener('focus', setOrigin);
@@ -217,9 +200,6 @@
     }
   }
 
-  /* =========================================================
-     LOADER (solo la primera visita de la sesión) + ENTRADA
-     ========================================================= */
   const start = () => {
     document.body.classList.remove('is-loading');
     lenis && lenis.start();
@@ -238,12 +218,11 @@
     .from('.nav', { yPercent: -100, autoAlpha: 0, duration: 1.1, clearProps: 'transform,opacity,visibility' }, 0.3));
 
   let seen = false;
-  try { seen = sessionStorage.getItem('lp-intro') === '1'; sessionStorage.setItem('lp-intro', '1'); } catch (e) { /* sin storage */ }
+  try { seen = sessionStorage.getItem('lp-intro') === '1'; sessionStorage.setItem('lp-intro', '1'); } catch (e) { }
 
   document.fonts.ready.then(() => {
     if (reduce) { loader && loader.remove(); start(); return; }
     if (seen || !loader) { loader && loader.remove(); heroIntro(); start(); return; }
-    // Primero brota la flor, se cierra, y solo entonces aparece el logo (nunca a la vez)
     gsap.timeline({ onComplete: () => loader.remove() })
       .fromTo('.loader__flor', { scale: 0, rotate: -160 }, { scale: 1, rotate: 0, duration: 0.65, ease })
       .to('.loader__flor', { scale: 0, rotate: 90, duration: 0.4, ease: 'power3.in' }, 0.7)
@@ -259,7 +238,6 @@
     gsap.to('.hero__copy', { yPercent: -12, ease: 'none', scrollTrigger: st });
     gsap.to('.hero__ilu', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.hero__ilu', start: 'top bottom', end: 'bottom top', scrub: true } });
     gsap.to('.hero__media', { yPercent: 8, ease: 'none', scrollTrigger: st });
-    // Los dibujitos flotan suavemente
     $$('.doodle').forEach((d, i) => gsap.to(d, { y: i % 2 ? 12 : -12, rotate: i % 2 ? -8 : 8, duration: 3 + i * 0.4, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
   }
   if (video) ScrollTrigger.create({
@@ -268,9 +246,6 @@
     onEnterBack: () => { if (!userPaused) video.play().catch(() => {}); },
   });
 
-  /* =========================================================
-     NAV
-     ========================================================= */
   const nav = $('#nav');
   ScrollTrigger.create({
     start: 70, end: 'max',
@@ -282,9 +257,6 @@
     },
   });
 
-  /* =========================================================
-     MENÚ HAMBURGUESA (GSAP + foco accesible)
-     ========================================================= */
   const menu = $('#menu');
   const burger = $('#burger');
   const menuBg = $('.menu__bg');
@@ -381,9 +353,6 @@
     });
   });
 
-  /* =========================================================
-     REVEALS GENERALES
-     ========================================================= */
   if (!reduce) {
     document.fonts.ready.then(() => {
       $$('.split').forEach((el) => {
@@ -404,14 +373,12 @@
     });
 
     if ($('.about')) {
-    // Sobre nosotros: fotos que se revelan y notas del packaging que "se colocan"
     gsap.fromTo('.about__main', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.6, ease: 'expo.inOut', clearProps: 'clipPath', scrollTrigger: { trigger: '.about__photos', start: 'top 80%' } });
     gsap.fromTo('.about__main img', { yPercent: -10 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.about__photos', start: 'top bottom', end: 'bottom top', scrub: true } });
     gsap.from('.about__inset', { y: 80, rotate: 14, autoAlpha: 0, duration: 1.4, delay: 0.5, ease: 'back.out(1.4)', clearProps: 'transform', scrollTrigger: { trigger: '.about__photos', start: 'top 80%' } });
     gsap.from('.about__text .more', { y: 20, autoAlpha: 0, duration: 1, ease, scrollTrigger: { trigger: '.about__text .more', start: 'top 92%' } });
     }
 
-    // Eventos y franquicias
     if ($('.events')) {
       gsap.from('.slide', { y: 80, autoAlpha: 0, duration: 1.3, stagger: 0.08, ease, scrollTrigger: { trigger: '.events__track', start: 'top 88%' } });
       gsap.from('.events__points li', { x: -20, autoAlpha: 0, duration: 0.9, stagger: 0.07, ease, scrollTrigger: { trigger: '.events__points', start: 'top 90%' } });
@@ -423,14 +390,10 @@
     }
     $$('.brandmark').forEach((b) => gsap.from(b, { y: 16, autoAlpha: 0, duration: 1.1, ease, scrollTrigger: { trigger: b, start: 'top 92%' } }));
 
-    // Visítanos
     if ($('.hours')) gsap.from('.hours > div', { x: -20, autoAlpha: 0, duration: 0.8, stagger: 0.05, ease, scrollTrigger: { trigger: '.hours', start: 'top 88%' } });
     if ($('.map')) gsap.fromTo('.map', { clipPath: 'inset(100% 0% 0% 0% round 999px 999px 18px 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 999px 999px 18px 18px)', duration: 1.6, ease: 'expo.inOut', clearProps: 'clipPath', scrollTrigger: { trigger: '.map', start: 'top 85%' } });
   }
 
-  /* =========================================================
-     CARTA — pestañas + foto del plato
-     ========================================================= */
   if ($('#carta')) {
   const tabs = $$('.tab');
   const ink = $('.tabs__pill');
@@ -477,7 +440,6 @@
     });
   });
 
-  // Fichas: "Ver foto" en táctil (en escritorio la foto aparece al pasar el ratón)
   $$('.prod__flip').forEach((b) => b.addEventListener('click', () => {
     const card = b.closest('.prod');
     const on = !card.classList.contains('is-photo');
@@ -495,7 +457,6 @@
     });
   }
 
-  // Cada plato con foto se convierte en un botón (ratón, teclado y táctil)
   const preview = $('.preview');
   const pImg = $('img', preview);
   let shown = false;
@@ -541,7 +502,7 @@
       btn.addEventListener('blur', hidePreview);
     }
     btn.addEventListener('click', () => {
-      if (fine) return; // en escritorio la foto sigue al cursor
+      if (fine) return;
       const openNow = !it.classList.contains('is-open');
       it.classList.toggle('is-open', openNow);
       btn.setAttribute('aria-expanded', openNow);
@@ -561,9 +522,6 @@
 
   }
 
-  /* =========================================================
-     CARRUSEL 3D
-     ========================================================= */
   (() => {
     const stage = $('#stage');
     if (!stage) return;
@@ -649,9 +607,6 @@
     }
   })();
 
-  /* =========================================================
-     CÓMO TRABAJAMOS — scroll horizontal (escritorio)
-     ========================================================= */
   const mm = gsap.matchMedia();
   mm.add('(min-width: 901px)', () => {
     if (reduce || !$('.process')) return;
@@ -676,9 +631,6 @@
     gsap.from('.process .step', { y: 40, autoAlpha: 0, duration: 1.1, stagger: 0.1, ease, scrollTrigger: { trigger: '.process__track', start: 'top 85%' } });
   });
 
-  /* =========================================================
-     RESEÑAS — las servilletas caen sobre la mesa
-     ========================================================= */
   if (!reduce && $('.reviews')) {
     gsap.from('.score__flores svg', { scale: 0, rotate: -120, duration: 1, stagger: 0.1, ease: 'back.out(2.2)', scrollTrigger: { trigger: '.score', start: 'top 88%' } });
     gsap.from('.score .btn', { y: 20, autoAlpha: 0, duration: 1, delay: 0.5, ease, scrollTrigger: { trigger: '.score', start: 'top 88%' } });
@@ -698,9 +650,6 @@
     });
   }
 
-  /* =========================================================
-     FOOTER
-     ========================================================= */
   if (!reduce) {
     if ($('.footer__grid')) gsap.from('.footer__grid > div', { y: 36, autoAlpha: 0, duration: 1.1, stagger: 0.1, ease, scrollTrigger: { trigger: '.footer__grid', start: 'top 92%' } });
     if ($('.footer__logo')) gsap.from('.footer__logo', { yPercent: 40, autoAlpha: 0, duration: 1.6, ease, scrollTrigger: { trigger: '.footer__logo', start: 'top 98%' } });

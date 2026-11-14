@@ -1,7 +1,3 @@
-/* =========================================================
-   Le Pavlove — Tienda online (pedido para recoger en tienda)
-   El pedido se envía por WhatsApp y se paga al recoger.
-   ========================================================= */
 (window.LP_READY || Promise.resolve()).then(() => {
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
@@ -11,8 +7,6 @@
   const WA = (LPD && LPD.site.whatsapp) || '34642882027';
   const STORE_KEY = 'lp-cart';
 
-  /* ---------- Catálogo (precios de la carta) ---------- */
-  // Alérgenos según los ingredientes de la carta: revisar con el obrador antes de publicar.
   const BUILTIN = [
     { id: 'pav-personal', cat: 'pavlovas', name: 'Pavlova personal', size: '8 cm', img: 'assets/img/pavlova.webp', png: true,
       desc: 'Merengue crujiente con almendra y nuez, dulce de leche, crema de vainilla de Madagascar y fresas.',
@@ -51,7 +45,6 @@
       allergens: [],
       variants: [{ label: '250 g', price: 12 }, { label: '454 g', price: 16 }, { label: '2,5 kg', price: 74 }] },
   ];
-  // El panel de administración guarda el catálogo en data/content.json
   const PRODUCTS = (LPD && LPD.shop && LPD.shop.products ? LPD.shop.products.filter((p) => !p.hidden).map((p) => ({ ...p, png: p.art, extra: p.extra || undefined })) : BUILTIN);
 
   const LPimg = (window.LP && window.LP.img) || ((src, alt) => `<img src="${src}" alt="${alt}" loading="lazy" decoding="async">`);
@@ -59,17 +52,15 @@
   const eur = (n) => n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
   const byId = (id) => PRODUCTS.find((p) => p.id === id);
 
-  /* ---------- Estado del carrito (guardado en este navegador) ---------- */
   let cart = [];
   try { cart = JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch (e) { cart = []; }
   cart = cart.filter((l) => byId(l.id) && byId(l.id).variants[l.v]);
-  const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(cart)); } catch (e) { /* sin storage */ } };
+  const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(cart)); } catch (e) { } };
   const lineKey = (l) => `${l.id}|${l.v}|${l.x ? 1 : 0}`;
   const linePrice = (l) => { const p = byId(l.id); return p.variants[l.v].price + (l.x && p.extra ? p.extra.price : 0); };
   const total = () => cart.reduce((s, l) => s + linePrice(l) * l.q, 0);
   const count = () => cart.reduce((s, l) => s + l.q, 0);
 
-  /* ---------- Catálogo en pantalla ---------- */
   const grid = $('#shopGrid');
   grid.innerHTML = PRODUCTS.map((p) => `
     <article class="sp" data-cat="${p.cat}" data-id="${p.id}">
@@ -96,7 +87,6 @@
       </div>
     </article>`).join('');
 
-  // El efecto de flor de los botones (main.js) ya se aplicó antes: se lo damos a los nuevos
   $$('.sp__add', grid).forEach((btn) => {
     btn.classList.add('btn--lead');
     btn.insertAdjacentHTML('afterbegin', '<span class="btn__fill" aria-hidden="true"></span><span class="btn__bloom" aria-hidden="true"><svg><use href="#flor"/></svg></span>');
@@ -138,7 +128,6 @@
     });
   });
 
-  /* ---------- Filtros ---------- */
   const filters = $$('.filter');
   filters.forEach((f) => f.addEventListener('click', () => {
     filters.forEach((o) => { const on = o === f; o.classList.toggle('is-active', on); o.setAttribute('aria-pressed', on); });
@@ -155,7 +144,6 @@
     });
   }));
 
-  /* ---------- Carrito (panel lateral) ---------- */
   const cartEl = $('#cart');
   const panel = $('.cart__panel', cartEl);
   const overlay = $('.cart__overlay', cartEl);
@@ -274,7 +262,6 @@
   openers.forEach((o) => o.addEventListener('click', openCart));
   $$('[data-close]', cartEl).forEach((b) => b.addEventListener('click', closeCart));
 
-  /* ---------- Vuelo al carrito ---------- */
   function flyToCart(img) {
     const target = (getComputedStyle($('#cartFab')).display !== 'none' ? $('#cartFab') : $('#cartBtn'));
     if (!hasGsap || reduce || !img || !target) return;
@@ -293,18 +280,16 @@
       .to(clone, { autoAlpha: 0, duration: 0.2 }, 0.75);
   }
 
-  /* ---------- Recogida: días y horas de apertura ---------- */
-  // Días y franjas salen del horario del panel (última recogida: 30 min antes de cerrar)
   const HOURS = (LPD && LPD.hours) || [0, 1, 1, 1, 1, 0, 1].map((o, i) => ({ open: !!o, from: '17:00', to: '21:00' }));
   const toMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + (m || 0); };
-  const slotsFor = (dow) => { // dow: 0 = domingo
+  const slotsFor = (dow) => {
     const h = HOURS[(dow + 6) % 7];
     if (!h || !h.open) return [];
     const out = [];
     for (let m = toMin(h.from); m <= toMin(h.to) - 30; m += 30) out.push(`${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
     return out;
   };
-  const LEAD_MIN = 90; // margen mínimo para preparar el pedido
+  const LEAD_MIN = 90;
   const fDay = $('#fDay');
   const fTime = $('#fTime');
   const dayLabel = (d) => d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -341,7 +326,6 @@
   }
   fDay.addEventListener('change', fillTimes);
 
-  /* ---------- Enviar pedido por WhatsApp ---------- */
   const errEl = $('#orderError');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -396,11 +380,9 @@
     closeCart();
   });
 
-  /* ---------- Avisos para lectores de pantalla ---------- */
   const live = $('#cartLive');
   function announce(t) { live.textContent = ''; setTimeout(() => (live.textContent = t), 50); }
 
-  /* ---------- Entrada de las fichas ---------- */
   render();
   if (hasGsap && !reduce && window.ScrollTrigger) {
     gsap.from('.sp', { y: 60, autoAlpha: 0, duration: 1.1, stagger: 0.07, ease: 'expo.out', clearProps: 'transform,opacity,visibility', scrollTrigger: { trigger: grid, start: 'top 85%' } });

@@ -1,8 +1,3 @@
-/* =========================================================
-   Panel de administración · Le Pavlove
-   Misma identidad que la web: azul royal, marfil, Playfair
-   condensada con remate en cursiva y botones de píldora.
-   ========================================================= */
 :root {
   --royal: #1518b0; --royal-deep: #0f1290; --ivory: #f2e9d5; --cream: #faf5ea; --paper: #fffdf8; --navy: #1f2149;
   --ink: #1f2149; --ink-2: #4a4d74; --line: rgba(20, 24, 182, .16); --line-2: rgba(20, 24, 182, .08);
@@ -21,7 +16,6 @@ input, textarea, select { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--royal); outline-offset: 3px; border-radius: 8px; }
 em { font-style: italic; }
 
-/* ---------- Estructura ---------- */
 .app { display: grid; grid-template-columns: 264px 1fr; height: 100vh; height: 100dvh; }
 .side {
   position: relative; display: flex; flex-direction: column; gap: 18px; padding: 26px 18px 18px; overflow-y: auto;
@@ -74,7 +68,6 @@ em { font-style: italic; }
 .frame__load.is-off { opacity: 0; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ---------- Tarjetas y campos ---------- */
 .tip { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 22px; padding: 16px 18px; border-radius: var(--r); background: var(--royal); color: var(--ivory); font-size: 15px; }
 .tip svg { width: 30px; height: 30px; flex: none; }
 .tip b { font-weight: 500; }
@@ -108,14 +101,12 @@ em { font-style: italic; }
 .sw input:focus-visible + i { outline: 2px solid var(--royal); outline-offset: 3px; }
 .sw small { display: block; font-size: 13px; color: var(--ink-2); }
 
-/* Foto */
 .img { display: flex; align-items: center; gap: 14px; }
 .img__t { position: relative; width: 84px; height: 84px; flex: none; overflow: hidden; border-radius: 14px; border: 1px solid var(--line); background: repeating-conic-gradient(#f3ecdc 0 25%, #fbf6ec 0 50%) 0 0 / 16px 16px; }
 .img__t img { width: 100%; height: 100%; object-fit: contain; }
 .img__t.is-empty::after { content: "Sin foto"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; color: var(--ink-2); }
 .img__b { display: grid; gap: 6px; justify-items: start; }
 
-/* Botones */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: 999px; border: 1.5px solid var(--royal); font-size: 15.5px; font-weight: 500; line-height: 1.2; white-space: nowrap; transition: background .3s var(--ease), color .3s, transform .3s var(--ease), box-shadow .3s; }
 .btn svg { width: 18px; height: 18px; }
 .btn--royal { background: var(--royal); color: var(--ivory); }
@@ -133,7 +124,6 @@ em { font-style: italic; }
 .menu-btn:hover { background: var(--royal); color: var(--ivory); }
 .bar__top { display: contents; }
 
-/* Listas con tarjetas */
 .list { display: grid; gap: 10px; margin-bottom: 12px; }
 details.it { border: 1px solid var(--line); border-radius: 16px; background: #fff; overflow: hidden; }
 details.it[open] { box-shadow: 0 14px 30px -22px rgba(14, 17, 144, .6); }
@@ -181,7 +171,6 @@ details.it[open] > summary::before { transform: rotate(45deg); }
 .demo-notice { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 12px 18px; border-radius: 999px; border: 2px solid var(--ivory); background: var(--royal); color: var(--ivory); font-size: 15px; }
 .demo-notice svg { width: 22px; height: 22px; flex: none; }
 
-/* ---------- Modal y avisos ---------- */
 .modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(14, 17, 144, .55); backdrop-filter: blur(4px); animation: fade .3s; }
 .modal__box { width: min(560px, 100%); max-height: calc(100dvh - 40px); overflow-y: auto; padding: 28px; border-radius: 24px; background: var(--cream); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .5); animation: rise .5s var(--ease); }
 .modal__box--wide { width: min(880px, 100%); }
@@ -203,7 +192,6 @@ details.it[open] > summary::before { transform: rotate(45deg); }
 @keyframes fade { from { opacity: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(24px) scale(.98); } }
 
-/* ---------- Pantallas medianas y móviles ---------- */
 @media (max-width: 1180px) {
   .cols { grid-template-columns: 1fr; }
   .preview { position: fixed; inset: 0; z-index: 40; border: 0; transform: translateY(100%); visibility: hidden; transition: transform .5s var(--ease), visibility 0s .5s; }
@@ -212,7 +200,6 @@ details.it[open] > summary::before { transform: rotate(45deg); }
 }
 @media (max-width: 860px) {
   .app { grid-template-columns: 1fr; }
-  /* Las secciones pasan a un panel lateral que se abre con el botón de menú */
   .side { position: fixed; inset: 0 auto 0 0; z-index: 45; width: min(300px, 84vw); transform: translateX(-100%); visibility: hidden; transition: transform .5s var(--ease), visibility 0s .5s; box-shadow: 20px 0 50px -20px rgba(14, 17, 144, .6); }
   .side.is-open { transform: none; visibility: visible; transition: transform .5s var(--ease); }
   .scrim { position: fixed; inset: 0; z-index: 44; background: rgba(14, 17, 144, .5); backdrop-filter: blur(3px); animation: fade .3s; }
@@ -245,7 +232,6 @@ details.it[open] > summary::before { transform: rotate(45deg); }
 .uploading { display: flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--ink-2); font-size: 14px; }
 .uploading svg { width: 22px; height: 22px; color: var(--royal); animation: spin 4s linear infinite; }
 
-/* ---------- Entrada con contraseña ---------- */
 .gate { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px; background: var(--royal) url("../assets/img/marca/monograma-ivory.svg") center top / 240px; transition: opacity .5s var(--ease); }
 .gate.is-out { opacity: 0; }
 .gate__box { width: min(420px, 100%); display: grid; gap: 16px; padding: 34px 30px 30px; border-radius: 28px; background: var(--cream); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .5); animation: rise .6s var(--ease); }

@@ -1,9 +1,3 @@
-/* =========================================================
-   Panel de administración · Le Pavlove
-   Edita data/content.json con formularios, enseña una vista previa
-   en vivo (la propia web en modo ?lp-preview) y publica el cambio
-   con la API de GitHub (un commit → GitHub Pages actualiza la web).
-   ========================================================= */
 (() => {
   'use strict';
   const $ = (s, c = document) => c.querySelector(s);
@@ -14,12 +8,11 @@
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
-    del(k) { try { localStorage.removeItem(k); } catch (e) { /* nada */ } },
+    del(k) { try { localStorage.removeItem(k); } catch (e) { } },
   };
 
   const REPO = 'MakeWeb0/lepavlove';
   const BRANCH = 'main';
-  // Fotos del fotógrafo (con 3 tamaños), ilustraciones y fotos del local
   const LIB = [
     ...['pavlova-caja', 'pavlova-personal', 'cuplova', 'matchas', 'pavlova-grande', 'iced-latte', 'parfait', 'packaging', 'bites', 'matcha-mesa', 'fresita', 'batido', 'pavlova-cumple', 'latte'].map((n) => `assets/img/p/galeria/${n}.webp`),
     ...['pavlova-personal', 'bites', 'pavlova-caja', 'pavlova-grande', 'pavlova-cumple', 'cuplova', 'cuplova-alta', 'parfait', 'parfait-fresas', 'parfait-capas', 'fresita', 'iced-latte', 'latte', 'matchas', 'matcha-latte', 'matcha-mesa', 'barra', 'batido', 'packaging'].map((n) => `assets/img/p/${n}.webp`),
@@ -28,7 +21,6 @@
   const SIZED = /^assets\/img\/(p|p\/galeria|uploads)\/[^/]+\.webp$/;
   const ICONS = [['flor', 'Flor de Le Pavlove'], ['frambuesa', 'Frambuesa'], ['arandano', 'Arándano'], ['hoja', 'Hoja']];
 
-  /* ---------- Secciones ---------- */
   const SECTIONS = [
     { id: 'inicio', label: 'Inicio', icon: 'flor', desc: 'Lo primero que ve el cliente al entrar.', page: 'index.html', hash: '' },
     { id: 'nosotros', label: 'Sobre nosotros', icon: 'flor', desc: 'Tu historia, las fotos del local y las frases de las cajas.', page: 'index.html', hash: '#nosotros' },
@@ -44,22 +36,20 @@
     { id: 'aviso', label: 'Aviso especial', icon: 'arandano', desc: 'Un mensaje destacado para todos los clientes.', page: 'index.html', hash: '' },
   ];
 
-  /* ---------- Estado ---------- */
-  let D = null;                 // contenido que se está editando
-  let PUB = '';                 // contenido publicado (JSON normalizado)
+  let D = null;
+  let PUB = '';
   let current = store.get('lp-admin-sec') || 'inicio';
   if (!SECTIONS.some((s) => s.id === current)) current = 'inicio';
   let cartaCat = 0;
   const openSet = new Set();
-  const pending = (window.__lpPending = {}); // fotos nuevas aún sin publicar { ruta: dataURL }
-  try { Object.assign(pending, JSON.parse(store.get('lp-pending') || '{}')); } catch (e) { /* nada */ }
+  const pending = (window.__lpPending = {});
+  try { Object.assign(pending, JSON.parse(store.get('lp-pending') || '{}')); } catch (e) { }
 
   const norm = (o) => JSON.stringify(o);
   const isDirty = () => norm(D) !== PUB;
   const get = (p) => p.split('.').reduce((o, k) => (o == null ? o : o[k]), D);
   const setv = (p, v) => { const ks = p.split('.'); const last = ks.pop(); ks.reduce((o, k) => o[k], D)[last] = v; };
 
-  /* ---------- Plantillas de elementos nuevos ---------- */
   const TPL = {
     cardItem: () => ({ name: 'Nuevo producto', size: '', desc: '', price: '0,00 €', chips: [], ill: 'assets/img/p/pavlova-personal.webp', photo: '', photoOnly: true, star: false }),
     menuItem: () => ({ name: 'Nuevo producto', note: '', price: '0 €' }),
@@ -77,7 +67,6 @@
     extra: () => ({ label: 'Con extra', price: 1 }),
   };
 
-  /* ---------- Constructores de campos (devuelven HTML) ---------- */
   const T = (path, label, o = {}) => {
     const v = get(path);
     const ctl = o.area
@@ -92,7 +81,6 @@
   const SEL = (path, label, opts, o = {}) => `<label class="fld${o.wide ? ' wide' : ''}"><span>${label}</span><select data-path="${path}"${o.num ? ' data-kind="num"' : ''}>${opts.map(([v, l]) => `<option value="${esc(v)}"${String(get(path)) === String(v) ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`;
   const CK = (path, label, sub, o = {}) => `<label class="sw${o.wide ? ' wide' : ''}"><input type="checkbox" data-path="${path}"${o.inv ? ' data-inv' : ''}${(o.inv ? !get(path) : get(path)) ? ' checked' : ''}><i></i><span>${label}${sub ? `<small>${sub}</small>` : ''}</span></label>`;
   const OBJ = (path, label, tpl, sub) => `<label class="sw"><input type="checkbox" data-obj="${path}" data-tpl="${tpl}"${get(path) ? ' checked' : ''}><i></i><span>${label}${sub ? `<small>${sub}</small>` : ''}</span></label>`;
-  // Miniaturas: la versión pequeña si existe (o la foto recién subida)
   const src = (p) => esc(pending[p] || (SIZED.test(p || '') ? p.slice(0, -5) + '-480.webp' : p) || '');
   const IM = (path, label, o = {}) => {
     const v = get(path);
@@ -101,7 +89,6 @@
   const ibtn = (act, path, i, icon, title, extra = '') => `<button type="button" class="ib${act === 'del' ? ' ib--del' : ''}" data-act="${act}" data-path="${path}" data-i="${i}" title="${title}" aria-label="${title}"${extra}><svg aria-hidden="true"><use href="#${icon}"/></svg></button>`;
   const tools = (path, i, n, o = {}) => `<span class="it__tools">${ibtn('up', path, i, 'i-up', 'Subir', i === 0 ? ' disabled' : '')}${ibtn('down', path, i, 'i-down', 'Bajar', i === n - 1 ? ' disabled' : '')}${o.fixed ? '' : ibtn('del', path, i, 'i-trash', 'Quitar')}</span>`;
   const addBtn = (path, tpl, label) => `<button type="button" class="btn btn--line btn--sm" data-act="add" data-path="${path}" data-tpl="${tpl}"><svg aria-hidden="true"><use href="#i-plus"/></svg>${label}</button>`;
-  // Elemento de lista desplegable
   const IT = (path, i, n, o) => {
     const key = `${path}.${i}`;
     return `<details class="it" data-key="${key}"${openSet.has(key) ? ' open' : ''}><summary>${o.thumb ? `<img class="it__thumb" src="${src(o.thumb)}" alt="">` : ''}<span class="it__title" data-live="${o.live || ''}">${esc(o.title)}</span>${o.small ? `<small class="it__small">${esc(o.small)}</small>` : ''}${tools(path, i, n, o)}</summary><div class="it__body">${o.body}</div></details>`;
@@ -109,7 +96,6 @@
   const card = (title, help, body) => `<section class="card">${title ? `<h2>${title}</h2>` : ''}${help ? `<p class="help">${help}</p>` : ''}${body}</section>`;
   const priceHint = 'Escríbelo como quieras que se vea: 3,30 €';
 
-  /* ---------- Contenido de cada sección ---------- */
   const VIEWS = {
     inicio() {
       return `${firstTip()}
@@ -317,7 +303,6 @@
     return `<div class="tip" id="tip"><svg aria-hidden="true"><use href="#flor"/></svg><p><b>Cómo funciona:</b> cambia lo que quieras aquí y mira cómo queda en la vista previa. Cuando estés conforme, pulsa <b>Publicar cambios</b> arriba a la derecha. Hasta entonces nadie más ve nada.</p><button type="button" data-act="tip-x" aria-label="Cerrar">×</button></div>`;
   }
 
-  /* ---------- Pintar el panel ---------- */
   const editor = $('#editor');
   const nav = $('#nav');
   function renderNav() {
@@ -342,9 +327,9 @@
     const b = $('#btnConn');
     b.textContent = c ? 'Cerrar sesión' : (ACCESS ? 'Entrar' : 'Conectar con GitHub');
     b.classList.toggle('is-on', !!c);
+    $('#btnPass').hidden = !(c && ACCESS);
   }
 
-  /* ---------- Cambios: borrador + vista previa ---------- */
   let saveT = 0;
   let prevT = 0;
   function changed(quick) {
@@ -356,10 +341,9 @@
   }
   const persistPending = () => {
     const imgs = Object.fromEntries(Object.entries(pending).filter(([k]) => !k.startsWith('assets/video/')));
-    if (!store.set('lp-pending', JSON.stringify(imgs))) { /* demasiado grande: se queda en memoria */ }
+    if (!store.set('lp-pending', JSON.stringify(imgs))) { }
   };
 
-  /* ---------- Vista previa ---------- */
   const pv = $('#pv');
   const frame = $('#frame');
   const stage = $('#stage');
@@ -382,7 +366,7 @@
     const H = stage.clientHeight - 20;
     if (W < 50 || H < 50) return;
     let s; let fw; let fh; let iw; let ih;
-    const dev = innerWidth <= 860 ? 'mobile' : device; // en el móvil solo tiene sentido la vista de móvil
+    const dev = innerWidth <= 860 ? 'mobile' : device;
     if (dev === 'mobile') {
       s = Math.min(1, (H - 16) / 844, (W - 16) / 390);
       iw = 390; ih = 844; fw = iw * s + 16; fh = ih * s + 16;
@@ -405,7 +389,6 @@
   $('#btnPreview').addEventListener('click', () => { $('#preview').classList.add('is-open'); fit(); reloadPreview(); });
   $('#btnClosePreview').addEventListener('click', () => $('#preview').classList.remove('is-open'));
 
-  /* ---------- Navegación ---------- */
   const side = $('#side');
   const scrim = $('#scrim');
   const menuBtn = $('#btnMenu');
@@ -428,7 +411,6 @@
     setMenu(false);
   });
 
-  /* ---------- Edición de campos (delegación) ---------- */
   function readValue(el) {
     const kind = el.dataset.kind;
     if (el.type === 'checkbox') return el.hasAttribute('data-inv') ? !el.checked : el.checked;
@@ -456,7 +438,6 @@
       }
       if (el.type === 'checkbox' || el.tagName === 'SELECT') {
         setv(el.dataset.path, readValue(el));
-        // Estos cambios modifican otras partes del formulario (nombres, filas apagadas…)
         if (/^hours\.\d+\.open$/.test(el.dataset.path) || /\.(icon|cat|hidden|col)$/.test(el.dataset.path) || el.dataset.path === 'notice.on') { renderNav(); renderEditor(true); }
       }
       changed(true);
@@ -471,7 +452,6 @@
     if (e.target.open) openSet.add(k); else openSet.delete(k);
   }, true);
 
-  /* ---------- Acciones (botones) ---------- */
   const swap = (a, i, j) => { [a[i], a[j]] = [a[j], a[i]]; };
   editor.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-act]');
@@ -556,7 +536,6 @@
     }
   });
 
-  /* ---------- Fotos ---------- */
   const lib = () => [...new Set([...LIB, ...(D.uploads || [])])];
   let pickMark = false;
   function pickImage(current, allowNone) {
@@ -587,7 +566,6 @@
     });
   }
   const slugOf = (name) => name.replace(/\.[^.]+$/, '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'foto';
-  // Autoría y copyright dentro de la foto (EXIF en el WebP), como las del fotógrafo
   function tiffExif(entries) {
     const enc = new TextEncoder();
     const vals = entries.map(([tag, txt]) => [tag, enc.encode(txt.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/©/g, '(c)') + '\0')]);
@@ -634,7 +612,6 @@
       return 'data:image/webp;base64,' + btoa(s2);
     } catch (e) { return dataUrl; }
   }
-  // Logo para la marca de agua de la galería y los eventos
   const wmLogo = new Image();
   wmLogo.src = 'assets/img/marca/logo-ivory.svg';
   function drawWatermark(ctx, w, h) {
@@ -646,7 +623,6 @@
     ctx.drawImage(wmLogo, w - lw - m, h - lh - m, lw, lh);
     ctx.restore();
   }
-  // Guarda una imagen en 3 anchos (480/960/1600) como las fotos de la web
   function addCanvasUpload(source, w0, h0, slug, mark) {
     const id = `assets/img/uploads/${slug}-${Date.now().toString(36)}`;
     let path = '';
@@ -658,7 +634,7 @@
       ctx.drawImage(source, 0, 0, cv.width, cv.height);
       if (mark) drawWatermark(ctx, cv.width, cv.height);
       let url = cv.toDataURL('image/webp', suf ? 0.8 : 0.84);
-      if (!url.startsWith('data:image/webp')) { // Safari antiguo: una sola PNG
+      if (!url.startsWith('data:image/webp')) {
         url = cv.toDataURL('image/png');
         if (suf) continue;
         pending[id + '.png'] = url;
@@ -677,7 +653,6 @@
     const bmp = await createImageBitmap(file);
     return addCanvasUpload(bmp, bmp.width, bmp.height, slugOf(file.name), mark);
   }
-  // Vídeos del carrusel de eventos: se suben tal cual y se saca una portada
   const vidInput = () => $('#vidUp');
   function pickVideo(index) {
     const inp = vidInput();
@@ -710,7 +685,6 @@
     inp.click();
   }
 
-  /* ---------- Modales y avisos ---------- */
   const modal = $('#modal');
   let modalClose = null;
   function openModal(html, o = {}) {
@@ -742,18 +716,13 @@
     toastT = setTimeout(() => t.classList.remove('is-on'), kind === 'err' ? 7000 : 4000);
   }
 
-  /* ---------- GitHub ---------- */
-  // La conexión vive en este navegador: recordada (localStorage) o solo esta sesión (sessionStorage)
   const getCfg = () => {
     for (const raw of [store.get('lp-gh'), (() => { try { return sessionStorage.getItem('lp-gh'); } catch (e) { return null; } })()]) {
-      try { const c = JSON.parse(raw); if (c && c.token) return c; } catch (e) { /* nada */ }
+      try { const c = JSON.parse(raw); if (c && c.token) return c; } catch (e) { }
     }
     return null;
   };
 
-  /* ---------- Acceso del dueño con contraseña ----------
-     La clave de GitHub se guarda cifrada (AES-GCM, clave derivada con PBKDF2) en data/acceso.json.
-     El dueño solo escribe su contraseña: el panel descifra la clave en su navegador. */
   let ACCESS = null;
   const te = new TextEncoder();
   const b64e = (u8) => { let x = ''; u8.forEach((c) => (x += String.fromCharCode(c))); return btoa(x); };
@@ -801,9 +770,35 @@
       } finally { btn.disabled = false; btn.textContent = 'Entrar'; }
     };
   }
+  function passwordModal() {
+    openModal(`<h2>Cambiar <em>contraseña</em></h2>
+      <p>La nueva contraseña servirá para entrar al panel desde cualquier dispositivo.</p>
+      <label class="fld"><span>Contraseña actual</span><input type="password" id="pwOld" autocomplete="current-password"></label>
+      <label class="fld"><span>Contraseña nueva</span><input type="password" id="pwNew" autocomplete="new-password"><small>Mínimo 8 caracteres.</small></label>
+      <label class="fld"><span>Repite la contraseña nueva</span><input type="password" id="pwNew2" autocomplete="new-password"></label>
+      <div class="modal__foot"><button type="button" class="btn btn--line" data-r="x">Cancelar</button><button type="button" class="btn btn--royal" data-r="ok">Guardar contraseña</button></div>`);
+    modal.onclick = async (e) => {
+      const r = e.target.closest('[data-r]');
+      if (!r) return;
+      if (r.dataset.r === 'x') { closeModal(); return; }
+      const cfg = getCfg();
+      const pNew = $('#pwNew').value;
+      if (pNew.length < 8) { toast('La contraseña nueva debe tener al menos 8 caracteres.', 'err'); return; }
+      if (pNew !== $('#pwNew2').value) { toast('Las contraseñas nuevas no coinciden.', 'err'); return; }
+      r.classList.add('is-busy'); r.textContent = 'Guardando…';
+      try {
+        try { await openCfg(ACCESS, $('#pwOld').value); } catch (x) { throw new Error('La contraseña actual no es correcta.'); }
+        const acc = await sealCfg(cfg, pNew);
+        await putFile(cfg, 'data/acceso.json', b64(JSON.stringify(acc, null, 2) + '\n'), 'Cambio de contraseña del panel');
+        ACCESS = acc;
+        closeModal(true);
+        toast('Contraseña cambiada.', 'ok');
+      } catch (err) { toast(netMsg(err), 'err'); r.classList.remove('is-busy'); r.textContent = 'Guardar contraseña'; }
+    };
+  }
   function logout() {
     store.del('lp-gh');
-    try { sessionStorage.removeItem('lp-gh'); } catch (e) { /* nada */ }
+    try { sessionStorage.removeItem('lp-gh'); } catch (e) { }
     refreshStatus();
     if (ACCESS) showLogin();
   }
@@ -815,7 +810,7 @@
   async function ghError(res) {
     if (res.status === 401) return 'La conexión del panel ha caducado. Avisa a quien te hizo la web para renovarla.';
     if (res.status === 403 || res.status === 404) return 'Esa clave no tiene permiso para modificar el repositorio. Debe tener permiso «Contents: Read and write».';
-    let m = ''; try { m = (await res.json()).message; } catch (e) { /* nada */ }
+    let m = ''; try { m = (await res.json()).message; } catch (e) { }
     return `GitHub respondió ${res.status}${m ? ': ' + m : ''}`;
   }
   async function putFile(cfg, path, b64, message) {
@@ -842,7 +837,7 @@
       <label class="fld"><span>Clave (token)</span><input type="password" id="ghTok" autocomplete="off" value="${esc(c.token)}" placeholder="github_pat_…"></label>
       <div class="grid" style="grid-template-columns:1fr 1fr"><label class="fld"><span>Repositorio</span><input type="text" id="ghRepo" value="${esc(c.repo)}"></label><label class="fld"><span>Rama</span><input type="text" id="ghBr" value="${esc(c.branch)}"></label></div>
       <div class="sub"><span class="fld__l">Contraseña del dueño</span>
-        <p>Guarda la clave cifrada en la web para que el dueño entre solo con una contraseña, sin saber nada de GitHub. Usa al menos 10 caracteres (mejor una frase).</p>
+        <p>Guarda la clave cifrada en la web para que el dueño entre solo con una contraseña, sin saber nada de GitHub. Usa al menos 8 caracteres.</p>
         <div class="grid" style="grid-template-columns:1fr 1fr"><label class="fld"><span>Contraseña</span><input type="password" id="ownPass" autocomplete="new-password"></label><label class="fld"><span>Repítela</span><input type="password" id="ownPass2" autocomplete="new-password"></label></div>
         <div class="actions" style="margin-top:10px"><button type="button" class="btn btn--line btn--sm" data-r="seal">${ACCESS ? 'Cambiar la contraseña del dueño' : 'Crear la contraseña del dueño'}</button></div>
       </div>
@@ -862,7 +857,7 @@
         const cfg = { token: $('#ghTok').value.replace(/[^A-Za-z0-9_]/g, ''), repo: $('#ghRepo').value.trim(), branch: $('#ghBr').value.trim() || 'main' };
         const p1 = $('#ownPass').value; const p2 = $('#ownPass2').value;
         if (!cfg.token) { toast('Pega primero la clave de GitHub.', 'err'); return; }
-        if (p1.length < 10) { toast('La contraseña debe tener al menos 10 caracteres.', 'err'); return; }
+        if (p1.length < 8) { toast('La contraseña debe tener al menos 8 caracteres.', 'err'); return; }
         if (p1 !== p2) { toast('Las dos contraseñas no coinciden.', 'err'); return; }
         r.classList.add('is-busy'); r.textContent = 'Guardando…';
         try {
@@ -904,6 +899,7 @@
     else connectModal();
   });
   $('#btnTech').addEventListener('click', connectModal);
+  $('#btnPass').addEventListener('click', passwordModal);
 
   async function publish() {
     const cfg = getCfg();
@@ -912,7 +908,6 @@
     const btn = $('#btnPublish');
     btn.classList.add('is-busy'); btn.lastChild.textContent = 'Publicando…';
     try {
-      // Lo que de verdad usa la web (sin contar la propia lista de subidas)
       const used = new Set(JSON.stringify({ ...D, uploads: [] }).match(/assets\/(img|video)\/uploads\/[^"]+/g) || []);
       const keep = (D.uploads || []).filter((p) => used.has(p) || !pending[p]);
       D.uploads = keep;
@@ -950,13 +945,12 @@
   });
   addEventListener('beforeunload', (e) => { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
 
-  /* ---------- Arranque ---------- */
   fetch('data/content.json', { cache: 'no-cache' })
     .then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))
     .then((pub) => {
       PUB = norm(pub);
       let draft = null;
-      try { draft = JSON.parse(store.get('lp-draft')); } catch (e) { /* sin borrador */ }
+      try { draft = JSON.parse(store.get('lp-draft')); } catch (e) { }
       D = draft && norm(draft) !== PUB ? draft : pub;
       if (D === draft) setTimeout(() => toast('Hemos recuperado tus cambios sin publicar.'), 600);
       renderNav(); renderEditor(); refreshStatus();

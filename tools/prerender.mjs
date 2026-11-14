@@ -1,7 +1,3 @@
-// Pinta data/content.json dentro del HTML estático (index y tienda) con el mismo js/content.js
-// que usa la web. Así Google, las vistas previas de enlaces y quien no tenga JavaScript ven
-// el contenido real. Lo ejecuta GitHub Actions cada vez que el panel publica.
-//   node tools/prerender.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
 
@@ -17,7 +13,6 @@ for (const page of ['index.html', 'tienda.html', 'aviso-legal.html', 'privacidad
   window.fetch = async () => ({ ok: true, json: async () => structuredClone(data) });
   window.eval(script);
   await window.LP.ready;
-  // Lo dinámico se vuelve a crear en el navegador: el aviso y la clase de espera
   window.document.querySelectorAll('.notice').forEach((n) => n.remove());
   let out = dom.serialize();
   out = out.replace(/<html lang="es"( class="")?>/, '<html lang="es">');

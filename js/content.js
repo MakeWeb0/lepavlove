@@ -1,20 +1,11 @@
-/* =========================================================
-   Le Pavlove — contenido editable
-   Lee data/content.json (el que edita el panel /admin.html) y lo
-   pinta sobre el HTML. Si el JSON no carga, la web se queda con el
-   texto que ya trae el HTML. main.js y shop.js esperan a LP.ready.
-   ========================================================= */
 (() => {
   const q = (s, c = document) => c.querySelector(s);
   const qa = (s, c = document) => [...c.querySelectorAll(s)];
   const PREVIEW = /[?&]lp-preview\b/.test(location.search);
 
-  /* ---------- Utilidades de texto ---------- */
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  // *texto* → cursiva (el remate de los titulares); salto de línea → <br>
   const rich = (s) => esc(s).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
   const icon = (n) => `<svg aria-hidden="true"><use href="#${esc(n || 'flor')}"/></svg>`;
-  // Fotos con variantes -480/-960 (las del fotógrafo y las subidas desde el panel)
   const SIZED = /^assets\/img\/(p|p\/galeria|uploads)\/[^/]+\.webp$/;
   const srcsetOf = (p) => { if (!SIZED.test(p || '')) return ''; const b = p.slice(0, -5); return `${b}-480.webp 480w, ${b}-960.webp 960w, ${p} 1600w`; };
   const small = (p) => (SIZED.test(p || '') ? p.slice(0, -5) + '-480.webp' : p);
@@ -32,7 +23,6 @@
   const set = (sel, html, ctx) => { const el = q(sel, ctx); if (el) el.innerHTML = html; return el; };
   const text = (sel, t, ctx) => { const el = q(sel, ctx); if (el) el.textContent = t; return el; };
 
-  /* ---------- Horario: textos derivados ---------- */
   const SHORT = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   const hoursRuns = (hours) => {
     const runs = [];
@@ -67,25 +57,23 @@
 
   const LP = (window.LP = { data: null, preview: PREVIEW, esc, rich, hoursInfo, townOf, img, small, srcsetOf });
 
-  /* ---------- Pintar ---------- */
   function applyAll(D) {
     const S = D.site || {};
     const H = D.hours || [];
     const full = hoursInfo(H, false);
     const short = hoursInfo(H, true);
 
-    /* Aviso */
     qa('.notice').forEach((n) => n.remove());
     if (D.notice && D.notice.on && D.notice.text) {
       let dismissed = false;
-      try { dismissed = sessionStorage.getItem('lp-notice') === D.notice.text; } catch (e) { /* sin storage */ }
+      try { dismissed = sessionStorage.getItem('lp-notice') === D.notice.text; } catch (e) { }
       if (!dismissed || PREVIEW) {
         const n = document.createElement('div');
         n.className = 'notice';
         n.setAttribute('role', 'status');
         n.innerHTML = `<svg class="notice__flor" aria-hidden="true"><use href="#flor"/></svg><p>${rich(D.notice.text)}</p><button type="button" class="notice__x" aria-label="Cerrar aviso">×</button>`;
         n.querySelector('.notice__x').addEventListener('click', () => {
-          try { sessionStorage.setItem('lp-notice', D.notice.text); } catch (e) { /* sin storage */ }
+          try { sessionStorage.setItem('lp-notice', D.notice.text); } catch (e) { }
           n.classList.add('is-out');
           setTimeout(() => n.remove(), 400);
         });
@@ -93,7 +81,6 @@
       }
     }
 
-    /* Menú (hamburguesa) */
     set('.menu__quote', rich(S.quote));
     const hoursShort = short.closed ? short.days : short.same ? `${short.days} · ${short.time.replace(/ – /, '–')}` : short.parts.map((p) => `${cap(p.label)} ${p.from}–${p.to}`).join(' · ');
     const town = townOf(S.city);
@@ -103,7 +90,6 @@
         <p><span class="eyebrow">Pedidos</span><a href="https://wa.me/${esc(S.whatsapp)}" target="_blank" rel="noopener">WhatsApp ${esc(S.phone)}</a></p>
         <p><span class="eyebrow">Síguenos</span><a href="https://www.instagram.com/${esc(S.instagram)}" target="_blank" rel="noopener">@${esc(S.instagram)}</a></p>`);
 
-    /* Inicio */
     const HE = D.hero;
     if (HE && q('.hero')) {
       set('.hero__kicker', esc(HE.kicker));
@@ -116,7 +102,6 @@
       set('.hero__tag', rich(HE.tag));
     }
 
-    /* Sobre nosotros */
     const A = D.about;
     if (A && q('.about')) {
       set('.about__text .eyebrow', esc(A.eyebrow));
@@ -130,7 +115,6 @@
       text('.about__inset figcaption', A.photoInsetCaption || '');
     }
 
-    /* La carta */
     const C = D.carta;
     if (C && q('#carta')) {
       set('.carta__head .eyebrow', esc(C.eyebrow));
@@ -153,7 +137,6 @@
       text('.allergens', C.allergens || '');
     }
 
-    /* Galería */
     const G = D.gallery;
     if (G && q('#ring')) {
       set('.gallery h2', rich(G.title));
@@ -161,7 +144,6 @@
       set('#ring', (G.images || []).map((g) => `<figure class="card">${img(g.img, g.alt, '280px', '', ' draggable="false"')}</figure>`).join(''));
     }
 
-    /* Cómo trabajamos */
     const P = D.process;
     if (P && q('.process')) {
       set('.process__top .eyebrow', esc(P.eyebrow));
@@ -180,7 +162,6 @@
       sb[1] && (sb[1].textContent = P.ctaWrite);
     }
 
-    /* Reseñas */
     const R = D.reviews;
     if (R && q('.reviews')) {
       set('.reviews .eyebrow', `<svg class="eyebrow__flor" aria-hidden="true"><use href="#flor"/></svg> ${esc(R.eyebrow)}`);
@@ -208,13 +189,11 @@
         `<figure class="napkin${r.big ? ' napkin--big' : ''}" style="--r:${ROT[i % ROT.length]}deg"><span class="napkin__stars" role="img" aria-label="5 de 5">${flor5}</span><blockquote>“${esc(r.text)}”</blockquote><figcaption><b>${esc(r.name)}</b><span>Opinión en Google</span></figcaption><svg class="napkin__logo" aria-hidden="true"><use href="#logo"/></svg></figure>`).join('')}</div>` : '')).join(''));
     }
 
-    /* Visítanos + horario */
     if (q('#visit-title')) set('#visit-title', rich(D.visit && D.visit.title));
     const dl = q('.hours');
     if (dl) set('.hours', H.map((h) => `<div data-open="${h.open ? esc(h.from) : ''}" data-close="${h.open ? esc(h.to) : ''}"><dt>${esc(h.day)}</dt><dd>${h.open ? `${esc(h.from)} – ${esc(h.to)}` : 'Cerrado'}</dd></div>`).join(''));
     set('.visit__addr', `<a href="${esc(S.mapsUrl)}" target="_blank" rel="noopener" class="ulink">${esc(S.street)} · ${esc(S.city)}</a><br><a href="https://wa.me/${esc(S.whatsapp)}" target="_blank" rel="noopener" class="ulink">WhatsApp ${esc(S.phone)}</a> · <a href="mailto:${esc(S.email)}" class="ulink">${esc(S.email)}</a>`);
 
-    /* Pie de página */
     set('.footer__title', rich(S.footerTitle));
     const fHours = full.closed ? full.days : full.same ? `${esc(full.days)}<br>${esc(full.time)}` : full.parts.map((p) => `${esc(cap(p.label))} ${esc(p.from)} – ${esc(p.to)}`).join('<br>');
     set('.footer__grid', `
@@ -225,7 +204,6 @@
 
     qa('[data-year]').forEach((y) => (y.textContent = new Date().getFullYear()));
 
-    /* Páginas legales: datos del titular (los rellena el dueño en el panel) */
     const L = D.legal || {};
     qa('[data-legal]').forEach((el) => {
       if (el.dataset.ph == null) el.dataset.ph = el.textContent;
@@ -241,7 +219,6 @@
     const cr = q('[data-legal-credit]');
     if (cr) { cr.hidden = !L.photoCredit; cr.textContent = L.photoCredit || ''; }
 
-    /* Eventos */
     const E = D.events;
     if (E && q('#eventos')) {
       set('.events .eyebrow', `<svg class="eyebrow__flor" aria-hidden="true"><use href="#flor"/></svg> ${esc(E.eyebrow)}`);
@@ -257,7 +234,6 @@
         ${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ''}</figure>`).join(''));
     }
 
-    /* Franquicias */
     const F = D.franchise;
     if (F && q('#franquicias')) {
       set('.franchise .eyebrow', esc(F.eyebrow));
@@ -270,7 +246,6 @@
       if (fm) fm.href = `mailto:${S.email}?subject=${encodeURIComponent('Franquicias Le Pavlove')}`;
     }
 
-    /* Enlaces sueltos (botones, WhatsApp flotante…) */
     qa('a[href*="wa.me/"]').forEach((a) => {
       if (a.id === 'waRetry') return;
       const h = a.getAttribute('href');
@@ -279,7 +254,6 @@
     qa('a[href*="share.google"]').forEach((a) => a.setAttribute('href', S.reviewsUrl));
     qa('a[href^="mailto:"]').forEach((a) => { if (!a.classList.contains('franchise__mail')) { a.setAttribute('href', `mailto:${S.email}`); if (a.textContent.includes('@')) a.textContent = S.email; } });
 
-    /* Tienda */
     const SH = D.shop;
     if (SH && q('.shop__head')) {
       set('.shop__head .eyebrow', esc(SH.eyebrow));
@@ -294,7 +268,6 @@
       qa('.filter[data-filter]').forEach((f) => { if (f.dataset.filter !== 'all') f.hidden = !cats.has(f.dataset.filter); });
     }
 
-    /* Datos estructurados para Google */
     const ld = q('script[type="application/ld+json"]');
     if (ld) {
       try {
@@ -308,11 +281,10 @@
         const EN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         j.openingHoursSpecification = hoursRuns(H).map((r) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: EN.slice(r.start, r.end + 1), opens: r.from, closes: r.to }));
         ld.textContent = JSON.stringify(j, null, 2);
-      } catch (e) { /* se queda el JSON-LD original */ }
+      } catch (e) { }
     }
   }
 
-  /* ---------- Carta: HTML de cada pestaña ---------- */
   const item = (it) => `<li class="item"${it.img ? ` data-img="${esc(small(it.img))}"${it.png ? ' data-png' : ''}` : ''}><div class="item__row"><span class="item__name">${esc(it.name)}${it.note ? ` <small>${esc(it.note)}</small>` : ''}</span><span class="item__line"></span><span class="item__price">${esc(it.price)}</span></div></li>`;
   const group = (g) => `<h3 class="group">${icon(g.icon)}${esc(g.title)}</h3>`
     + (g.note ? `<p class="extras__note">${esc(g.note)}</p>` : '')
@@ -346,10 +318,9 @@
       : `<div class="extras">${cols}</div>`) + '</div>';
   }
 
-  /* ---------- Carga ---------- */
   const load = () => {
     if (PREVIEW) {
-      try { const d = JSON.parse(localStorage.getItem('lp-draft')); if (d) return Promise.resolve(d); } catch (e) { /* sin borrador */ }
+      try { const d = JSON.parse(localStorage.getItem('lp-draft')); if (d) return Promise.resolve(d); } catch (e) { }
     }
     return fetch('data/content.json').then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
   };
@@ -357,24 +328,21 @@
   LP.ready = load().then((D) => {
     LP.data = D;
     if (PREVIEW) {
-      try { sessionStorage.setItem('lp-intro', '1'); } catch (e) { /* sin storage */ }
+      try { sessionStorage.setItem('lp-intro', '1'); } catch (e) { }
     }
     applyAll(D);
     if (PREVIEW) previewTweaks();
-  }).catch(() => { /* la web se queda con el HTML original */ })
+  }).catch(() => { })
     .then(() => document.documentElement.classList.remove('lp-wait'));
   window.LP_READY = LP.ready;
 
-  /* ---------- Modo vista previa (dentro del panel) ---------- */
   function previewTweaks() {
-    // Los enlaces internos siguen en modo vista previa
     qa('a[href]').forEach((a) => {
       const h = a.getAttribute('href');
       if (/^(index|tienda)\.html/.test(h)) a.setAttribute('href', h.replace(/^([^#]*)/, (m) => m + (m.includes('?') ? '&' : '?') + 'lp-preview'));
     });
-    // Fotos recién subidas que aún no están publicadas
     let pending = {};
-    try { pending = window.parent.__lpPending || {}; } catch (e) { /* sin padre */ }
+    try { pending = window.parent.__lpPending || {}; } catch (e) { }
     const fix = (im) => {
       const s = (im.getAttribute('src') || '').replace(/-(480|960)\.webp$/, '.webp');
       if (pending[s] && im.getAttribute('src') !== pending[s]) { im.removeAttribute('srcset'); im.src = pending[s]; }
