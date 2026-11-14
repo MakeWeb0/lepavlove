@@ -1,0 +1,21 @@
+Options -Indexes
+
+<Files "panel-config.php">
+  Require all denied
+</Files>
+
+RedirectMatch 404 ^/(\.git|\.github|tools)(/|$)
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.json$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(webp|png|jpg|svg|woff2|mp4)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_php.c>
+  php_value upload_max_filesize 64M
+  php_value post_max_size 64M
+</IfModule>

@@ -323,11 +323,13 @@
     chip.classList.toggle('is-dirty', d);
     $('#btnDiscard').disabled = !d;
     $('#btnPublish').disabled = !d;
-    const c = getCfg();
+    const c = loggedIn();
+    const gate = ACCESS || SERVER;
     const b = $('#btnConn');
-    b.textContent = c ? 'Cerrar sesión' : (ACCESS ? 'Entrar' : 'Conectar con GitHub');
-    b.classList.toggle('is-on', !!c);
-    $('#btnPass').hidden = !(c && ACCESS);
+    b.textContent = c ? (gate ? 'Cerrar sesión' : 'GitHub conectado') : (gate ? 'Entrar' : 'Conectar con GitHub');
+    b.classList.toggle('is-on', c);
+    $('#btnPass').hidden = !(c && gate);
+    $('#btnTech').hidden = SERVER;
   }
 
   let saveT = 0;
@@ -724,6 +726,34 @@
   };
 
   let ACCESS = null;
+  let SERVER = false;
+  const srvToken = () => store.get('lp-srv') || (() => { try { return sessionStorage.getItem('lp-srv'); } catch (e) { return null; } })();
+  async function srv(action, fields = {}, file) {
+    const fd = new FormData();
+    fd.append('action', action);
+    Object.entries(fields).forEach(([k, v]) => fd.append(k, v));
+    if (file) fd.append('file', file.blob, file.name);
+    const res = await fetch('api.php?action=' + action, { method: 'POST', body: fd, headers: { 'X-Panel': '1', 'X-Panel-Token': srvToken() || '' } });
+    let j = {};
+    try { j = await res.json(); } catch (e) { }
+    if (!res.ok || !j.ok) {
+      if (res.status === 401 && action !== 'login' && action !== 'password') { store.del('lp-srv'); try { sessionStorage.removeItem('lp-srv'); } catch (e) { } refreshStatus(); showLogin(); }
+      throw new Error(j.error || `El servidor respondió ${res.status}.`);
+    }
+    return j;
+  }
+  const keepToken = (t, remember) => {
+    if (remember) store.set('lp-srv', t);
+    else { try { sessionStorage.setItem('lp-srv', t); } catch (e) { store.set('lp-srv', t); } }
+  };
+  async function saveFile(path, b64data, message) {
+    if (!SERVER) return putFile(getCfg(), path, b64data, message);
+    const bin = atob(b64data);
+    const u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return srv('save', { path }, { blob: new Blob([u8]), name: path.split('/').pop() });
+  }
+  const loggedIn = () => (SERVER ? !!srvToken() : !!getCfg());
   const te = new TextEncoder();
   const b64e = (u8) => { let x = ''; u8.forEach((c) => (x += String.fromCharCode(c))); return btoa(x); };
   const b64d = (str) => Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
@@ -757,15 +787,21 @@
       const btn = $('button[type=submit]', form);
       btn.disabled = true; btn.textContent = 'Entrando…'; err.hidden = true;
       try {
-        const cfg = await openCfg(ACCESS, $('#gatePass').value);
-        if ($('#gateRemember').checked) store.set('lp-gh', JSON.stringify(cfg));
-        else { try { sessionStorage.setItem('lp-gh', JSON.stringify(cfg)); } catch (x) { store.set('lp-gh', JSON.stringify(cfg)); } }
+        if (SERVER) {
+          const j = await srv('login', { password: $('#gatePass').value, remember: $('#gateRemember').checked ? '1' : '' });
+          keepToken(j.token, $('#gateRemember').checked);
+          if (j.default) setTimeout(() => toast('Por seguridad, cambia la contraseña inicial en «Cambiar contraseña».'), 900);
+        } else {
+          const cfg = await openCfg(ACCESS, $('#gatePass').value);
+          if ($('#gateRemember').checked) store.set('lp-gh', JSON.stringify(cfg));
+          else { try { sessionStorage.setItem('lp-gh', JSON.stringify(cfg)); } catch (x) { store.set('lp-gh', JSON.stringify(cfg)); } }
+        }
         gate.classList.add('is-out');
         setTimeout(() => { gate.hidden = true; gate.classList.remove('is-out'); }, 500);
         refreshStatus();
       } catch (x) {
         err.hidden = false;
-        err.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
+        err.textContent = SERVER && x.message && !/incorrecta/.test(x.message) ? x.message : 'Contraseña incorrecta. Inténtalo de nuevo.';
         $('#gatePass').select();
       } finally { btn.disabled = false; btn.textContent = 'Entrar'; }
     };
@@ -787,20 +823,24 @@
       if (pNew !== $('#pwNew2').value) { toast('Las contraseñas nuevas no coinciden.', 'err'); return; }
       r.classList.add('is-busy'); r.textContent = 'Guardando…';
       try {
-        try { await openCfg(ACCESS, $('#pwOld').value); } catch (x) { throw new Error('La contraseña actual no es correcta.'); }
-        const acc = await sealCfg(cfg, pNew);
-        await putFile(cfg, 'data/acceso.json', b64(JSON.stringify(acc, null, 2) + '\n'), 'Cambio de contraseña del panel');
-        ACCESS = acc;
+        if (SERVER) {
+          const j = await srv('password', { old: $('#pwOld').value, new: pNew });
+          keepToken(j.token, !!store.get('lp-srv'));
+        } else {
+          try { await openCfg(ACCESS, $('#pwOld').value); } catch (x) { throw new Error('La contraseña actual no es correcta.'); }
+          const acc = await sealCfg(cfg, pNew);
+          await putFile(cfg, 'data/acceso.json', b64(JSON.stringify(acc, null, 2) + '\n'), 'Cambio de contraseña del panel');
+          ACCESS = acc;
+        }
         closeModal(true);
         toast('Contraseña cambiada.', 'ok');
       } catch (err) { toast(netMsg(err), 'err'); r.classList.remove('is-busy'); r.textContent = 'Guardar contraseña'; }
     };
   }
   function logout() {
-    store.del('lp-gh');
-    try { sessionStorage.removeItem('lp-gh'); } catch (e) { }
+    ['lp-gh', 'lp-srv'].forEach((k) => { store.del(k); try { sessionStorage.removeItem(k); } catch (e) { } });
     refreshStatus();
-    if (ACCESS) showLogin();
+    if (ACCESS || SERVER) showLogin();
   }
   const api = (cfg, path, init = {}) => fetch(`https://api.github.com/repos/${cfg.repo.replace(/^\/+|\/+$/g, '')}${path ? '/' + path : ''}`, {
     ...init,
@@ -894,17 +934,16 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
   $('#btnConn').addEventListener('click', () => {
-    if (getCfg() && ACCESS) logout();
-    else if (ACCESS) showLogin();
+    if (loggedIn() && (ACCESS || SERVER)) logout();
+    else if (ACCESS || SERVER) showLogin();
     else connectModal();
   });
   $('#btnTech').addEventListener('click', connectModal);
   $('#btnPass').addEventListener('click', passwordModal);
 
   async function publish() {
-    const cfg = getCfg();
-    if (!cfg) { if (ACCESS) showLogin(); else { connectModal(); toast('Primero conecta el panel con GitHub.'); } return; }
-    if (!(await ask('¿Publicar los cambios?', 'Los clientes los verán en la web en unos minutos (hasta 10 si ya la tenían abierta).', 'Publicar'))) return;
+    if (!loggedIn()) { if (ACCESS || SERVER) showLogin(); else { connectModal(); toast('Primero conecta el panel con GitHub.'); } return; }
+    if (!(await ask('¿Publicar los cambios?', SERVER ? 'Los clientes los verán en la web al momento.' : 'Los clientes los verán en la web en unos minutos (hasta 10 si ya la tenían abierta).', 'Publicar'))) return;
     const btn = $('#btnPublish');
     btn.classList.add('is-busy'); btn.lastChild.textContent = 'Publicando…';
     try {
@@ -916,16 +955,16 @@
       let n = 0;
       for (const p of todo) {
         btn.lastChild.textContent = `Subiendo ${++n}/${todo.length}…`;
-        await putFile(cfg, p, pending[p].split(',')[1], p.startsWith('assets/video/') ? 'Vídeo nuevo desde el panel' : 'Foto nueva desde el panel');
+        await saveFile(p, pending[p].split(',')[1], p.startsWith('assets/video/') ? 'Vídeo nuevo desde el panel' : 'Foto nueva desde el panel');
       }
       btn.lastChild.textContent = 'Publicando…';
-      await putFile(cfg, 'data/content.json', b64(JSON.stringify(D, null, 2) + '\n'), 'Actualización de contenido desde el panel');
+      await saveFile('data/content.json', b64(JSON.stringify(D, null, 2) + '\n'), 'Actualización de contenido desde el panel');
       Object.keys(pending).forEach((p) => { if (used.has(baseOf(p)) || !keep.includes(baseOf(p))) delete pending[p]; });
       persistPending();
       PUB = norm(D);
       store.set('lp-draft', JSON.stringify(D));
       refreshStatus();
-      toast('¡Publicado! La web se actualizará en unos minutos.', 'ok');
+      toast(SERVER ? '¡Publicado! Ya está en la web.' : '¡Publicado! La web se actualizará en unos minutos.', 'ok');
     } catch (err) {
       toast(netMsg(err), 'err');
     } finally {
@@ -955,11 +994,22 @@
       if (D === draft) setTimeout(() => toast('Hemos recuperado tus cambios sin publicar.'), 600);
       renderNav(); renderEditor(); refreshStatus();
       fit(); loadPreview();
-      return fetch('data/acceso.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).catch(() => null).then((acc) => {
-        ACCESS = acc && acc.data ? acc : null;
-        refreshStatus();
-        if (ACCESS && !getCfg()) showLogin();
-      });
+      return fetch('api.php?action=status', { headers: { 'X-Panel-Token': srvToken() || '' }, cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+        .then((st) => {
+          if (st && st.ok) {
+            SERVER = true;
+            if (!st.logged) { store.del('lp-srv'); try { sessionStorage.removeItem('lp-srv'); } catch (e) { } }
+            refreshStatus();
+            if (!st.logged) showLogin();
+            return null;
+          }
+          return fetch('data/acceso.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).catch(() => null).then((acc) => {
+            ACCESS = acc && acc.data ? acc : null;
+            refreshStatus();
+            if (ACCESS && !getCfg()) showLogin();
+          });
+        });
     })
     .catch(() => {
       openModal('<h2>No se pudo cargar la web</h2><p>El panel necesita leer <b>data/content.json</b>. Ábrelo desde la dirección de la web (no como archivo suelto) y recarga la página.</p>');
