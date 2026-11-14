@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Le Pavlove Patisserie</title>
+<script>
+(function () {
+  var base = '/lepavlove/';
+  var p = location.pathname;
+  if (p.indexOf(base) === 0 && p.indexOf(base + 'WEB%20LEPAVLOVE/') !== 0 && p.indexOf(base + 'WEB LEPAVLOVE/') !== 0) {
+    location.replace(base + 'WEB%20LEPAVLOVE/' + p.slice(base.length) + location.search + location.hash);
+  }
+})();
+</script>
+</head>
+<body style="background:#1518b0;color:#f2e9d5;font-family:sans-serif;display:grid;place-items:center;min-height:100vh;margin:0">
+<p><a href="/lepavlove/WEB%20LEPAVLOVE/" style="color:#f2e9d5">Volver a Le Pavlove Patisserie</a></p>
+</body>
+</html>
