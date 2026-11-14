@@ -727,13 +727,14 @@
 
   let ACCESS = null;
   let SERVER = false;
+  let API = 'api.php';
   const srvToken = () => store.get('lp-srv') || (() => { try { return sessionStorage.getItem('lp-srv'); } catch (e) { return null; } })();
   async function srv(action, fields = {}, file) {
     const fd = new FormData();
     fd.append('action', action);
     Object.entries(fields).forEach(([k, v]) => fd.append(k, v));
     if (file) fd.append('file', file.blob, file.name);
-    const res = await fetch('api.php?action=' + action, { method: 'POST', body: fd, headers: { 'X-Panel': '1', 'X-Panel-Token': srvToken() || '' } });
+    const res = await fetch(API + '?action=' + action, { method: 'POST', body: fd, headers: { 'X-Panel': '1', 'X-Panel-Token': srvToken() || '' } });
     let j = {};
     try { j = await res.json(); } catch (e) { }
     if (!res.ok || !j.ok) {
@@ -751,7 +752,13 @@
     const bin = atob(b64data);
     const u8 = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-    return srv('save', { path }, { blob: new Blob([u8]), name: path.split('/').pop() });
+    const blob = new Blob([u8]);
+    if (API === 'api/panel' && path.startsWith('assets/video/')) {
+      const { upload } = await import('https://esm.sh/@vercel/blob@2.9.0/client');
+      const type = { mp4: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime' }[path.split('.').pop()];
+      return upload(path, new Blob([u8], { type }), { access: 'public', handleUploadUrl: 'api/panel?action=upload', clientPayload: srvToken() || '', multipart: true });
+    }
+    return srv('save', { path }, { blob, name: path.split('/').pop() });
   }
   const loggedIn = () => (SERVER ? !!srvToken() : !!getCfg());
   const te = new TextEncoder();
@@ -994,8 +1001,9 @@
       if (D === draft) setTimeout(() => toast('Hemos recuperado tus cambios sin publicar.'), 600);
       renderNav(); renderEditor(); refreshStatus();
       fit(); loadPreview();
-      return fetch('api.php?action=status', { headers: { 'X-Panel-Token': srvToken() || '' }, cache: 'no-store' })
-        .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      const probe = (url) => fetch(url + '?action=status', { headers: { 'X-Panel-Token': srvToken() || '' }, cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : null)).catch(() => null).then((j) => (j && j.ok ? { url, j } : null));
+      return probe('api/panel').then((v) => v || probe('api.php')).then((found) => (found ? (API = found.url, found.j) : null))
         .then((st) => {
           if (st && st.ok) {
             SERVER = true;

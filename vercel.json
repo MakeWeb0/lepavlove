@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/content.js": { "includeFiles": "data/content.json" }
+  },
+  "routes": [
+    { "src": "/data/content\\.json", "dest": "/api/content" },
+    { "src": "/(assets/(?:img|video)/uploads/[^/]+)", "dest": "/api/file?p=$1" },
+    { "src": "/(api\\.php|data/panel-config\\.php|\\.htaccess)", "status": 404 },
+    { "handle": "filesystem" }
+  ]
+}
