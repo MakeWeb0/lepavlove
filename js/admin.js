@@ -340,7 +340,7 @@
     $('#btnPublish').disabled = !d;
     const c = getCfg();
     const b = $('#btnConn');
-    b.textContent = c ? 'GitHub conectado' : 'Conectar con GitHub';
+    b.textContent = c ? 'Cerrar sesión' : (ACCESS ? 'Entrar' : 'Conectar con GitHub');
     b.classList.toggle('is-on', !!c);
   }
 
@@ -743,14 +743,77 @@
   }
 
   /* ---------- GitHub ---------- */
-  const getCfg = () => { try { const c = JSON.parse(store.get('lp-gh')); return c && c.token ? c : null; } catch (e) { return null; } };
+  // La conexión vive en este navegador: recordada (localStorage) o solo esta sesión (sessionStorage)
+  const getCfg = () => {
+    for (const raw of [store.get('lp-gh'), (() => { try { return sessionStorage.getItem('lp-gh'); } catch (e) { return null; } })()]) {
+      try { const c = JSON.parse(raw); if (c && c.token) return c; } catch (e) { /* nada */ }
+    }
+    return null;
+  };
+
+  /* ---------- Acceso del dueño con contraseña ----------
+     La clave de GitHub se guarda cifrada (AES-GCM, clave derivada con PBKDF2) en data/acceso.json.
+     El dueño solo escribe su contraseña: el panel descifra la clave en su navegador. */
+  let ACCESS = null;
+  const te = new TextEncoder();
+  const b64e = (u8) => { let x = ''; u8.forEach((c) => (x += String.fromCharCode(c))); return btoa(x); };
+  const b64d = (str) => Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
+  async function deriveKey(pass, salt, iter) {
+    const base = await crypto.subtle.importKey('raw', te.encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  async function sealCfg(cfg, pass) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const iter = 600000;
+    const key = await deriveKey(pass, salt, iter);
+    const data = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, te.encode(JSON.stringify(cfg))));
+    return { v: 1, iter, salt: b64e(salt), iv: b64e(iv), data: b64e(data) };
+  }
+  async function openCfg(acc, pass) {
+    const key = await deriveKey(pass, b64d(acc.salt), acc.iter);
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64d(acc.iv) }, key, b64d(acc.data));
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+  function showLogin() {
+    const gate = $('#gate');
+    gate.hidden = false;
+    const form = $('#gateForm');
+    const err = $('#gateErr');
+    err.hidden = true;
+    $('#gatePass').value = '';
+    setTimeout(() => $('#gatePass').focus(), 50);
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = $('button[type=submit]', form);
+      btn.disabled = true; btn.textContent = 'Entrando…'; err.hidden = true;
+      try {
+        const cfg = await openCfg(ACCESS, $('#gatePass').value);
+        if ($('#gateRemember').checked) store.set('lp-gh', JSON.stringify(cfg));
+        else { try { sessionStorage.setItem('lp-gh', JSON.stringify(cfg)); } catch (x) { store.set('lp-gh', JSON.stringify(cfg)); } }
+        gate.classList.add('is-out');
+        setTimeout(() => { gate.hidden = true; gate.classList.remove('is-out'); }, 500);
+        refreshStatus();
+      } catch (x) {
+        err.hidden = false;
+        err.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
+        $('#gatePass').select();
+      } finally { btn.disabled = false; btn.textContent = 'Entrar'; }
+    };
+  }
+  function logout() {
+    store.del('lp-gh');
+    try { sessionStorage.removeItem('lp-gh'); } catch (e) { /* nada */ }
+    refreshStatus();
+    if (ACCESS) showLogin();
+  }
   const api = (cfg, path, init = {}) => fetch(`https://api.github.com/repos/${cfg.repo.replace(/^\/+|\/+$/g, '')}${path ? '/' + path : ''}`, {
     ...init,
     headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${cfg.token}`, 'X-GitHub-Api-Version': '2022-11-28', ...(init.headers || {}) },
   });
   const encPath = (p) => p.split('/').map(encodeURIComponent).join('/');
   async function ghError(res) {
-    if (res.status === 401) return 'GitHub no reconoce la clave (token). Puede haber caducado: vuelve a conectarla.';
+    if (res.status === 401) return 'La conexión del panel ha caducado. Avisa a quien te hizo la web para renovarla.';
     if (res.status === 403 || res.status === 404) return 'Esa clave no tiene permiso para modificar el repositorio. Debe tener permiso «Contents: Read and write».';
     let m = ''; try { m = (await res.json()).message; } catch (e) { /* nada */ }
     return `GitHub respondió ${res.status}${m ? ': ' + m : ''}`;
@@ -778,6 +841,11 @@
       </ol>
       <label class="fld"><span>Clave (token)</span><input type="password" id="ghTok" autocomplete="off" value="${esc(c.token)}" placeholder="github_pat_…"></label>
       <div class="grid" style="grid-template-columns:1fr 1fr"><label class="fld"><span>Repositorio</span><input type="text" id="ghRepo" value="${esc(c.repo)}"></label><label class="fld"><span>Rama</span><input type="text" id="ghBr" value="${esc(c.branch)}"></label></div>
+      <div class="sub"><span class="fld__l">Contraseña del dueño</span>
+        <p>Guarda la clave cifrada en la web para que el dueño entre solo con una contraseña, sin saber nada de GitHub. Usa al menos 10 caracteres (mejor una frase).</p>
+        <div class="grid" style="grid-template-columns:1fr 1fr"><label class="fld"><span>Contraseña</span><input type="password" id="ownPass" autocomplete="new-password"></label><label class="fld"><span>Repítela</span><input type="password" id="ownPass2" autocomplete="new-password"></label></div>
+        <div class="actions" style="margin-top:10px"><button type="button" class="btn btn--line btn--sm" data-r="seal">${ACCESS ? 'Cambiar la contraseña del dueño' : 'Crear la contraseña del dueño'}</button></div>
+      </div>
       <div class="modal__foot">
         <button type="button" class="btn btn--ghost" data-r="dl">Descargar copia (content.json)</button>
         ${getCfg() ? '<button type="button" class="btn btn--ghost" data-r="off">Desconectar</button>' : ''}
@@ -790,6 +858,25 @@
       if (r.dataset.r === 'x') { closeModal(); return; }
       if (r.dataset.r === 'off') { store.del('lp-gh'); closeModal(); refreshStatus(); toast('Desconectado.'); return; }
       if (r.dataset.r === 'dl') { download(); return; }
+      if (r.dataset.r === 'seal') {
+        const cfg = { token: $('#ghTok').value.replace(/[^A-Za-z0-9_]/g, ''), repo: $('#ghRepo').value.trim(), branch: $('#ghBr').value.trim() || 'main' };
+        const p1 = $('#ownPass').value; const p2 = $('#ownPass2').value;
+        if (!cfg.token) { toast('Pega primero la clave de GitHub.', 'err'); return; }
+        if (p1.length < 10) { toast('La contraseña debe tener al menos 10 caracteres.', 'err'); return; }
+        if (p1 !== p2) { toast('Las dos contraseñas no coinciden.', 'err'); return; }
+        r.classList.add('is-busy'); r.textContent = 'Guardando…';
+        try {
+          const res = await api(cfg, '');
+          if (!res.ok) throw new Error(await ghError(res));
+          const acc = await sealCfg(cfg, p1);
+          await putFile(cfg, 'data/acceso.json', b64(JSON.stringify(acc, null, 2) + '\n'), 'Acceso del panel con contraseña');
+          ACCESS = acc;
+          store.set('lp-gh', JSON.stringify(cfg));
+          closeModal(true); refreshStatus();
+          toast('Listo. El dueño ya puede entrar con su contraseña (en unos minutos).', 'ok');
+        } catch (err) { toast(netMsg(err), 'err'); r.classList.remove('is-busy'); r.textContent = 'Crear la contraseña del dueño'; }
+        return;
+      }
       const cfg = { token: $('#ghTok').value.replace(/[^A-Za-z0-9_]/g, ''), repo: $('#ghRepo').value.trim(), branch: $('#ghBr').value.trim() || 'main' };
       if (!cfg.token) { toast('Pega la clave primero.', 'err'); return; }
       r.classList.add('is-busy'); r.textContent = 'Comprobando…';
@@ -811,11 +898,16 @@
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
-  $('#btnConn').addEventListener('click', connectModal);
+  $('#btnConn').addEventListener('click', () => {
+    if (getCfg() && ACCESS) logout();
+    else if (ACCESS) showLogin();
+    else connectModal();
+  });
+  $('#btnTech').addEventListener('click', connectModal);
 
   async function publish() {
     const cfg = getCfg();
-    if (!cfg) { connectModal(); toast('Primero conecta el panel con GitHub.'); return; }
+    if (!cfg) { if (ACCESS) showLogin(); else { connectModal(); toast('Primero conecta el panel con GitHub.'); } return; }
     if (!(await ask('¿Publicar los cambios?', 'Los clientes los verán en la web en unos minutos (hasta 10 si ya la tenían abierta).', 'Publicar'))) return;
     const btn = $('#btnPublish');
     btn.classList.add('is-busy'); btn.lastChild.textContent = 'Publicando…';
@@ -869,6 +961,11 @@
       if (D === draft) setTimeout(() => toast('Hemos recuperado tus cambios sin publicar.'), 600);
       renderNav(); renderEditor(); refreshStatus();
       fit(); loadPreview();
+      return fetch('data/acceso.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).catch(() => null).then((acc) => {
+        ACCESS = acc && acc.data ? acc : null;
+        refreshStatus();
+        if (ACCESS && !getCfg()) showLogin();
+      });
     })
     .catch(() => {
       openModal('<h2>No se pudo cargar la web</h2><p>El panel necesita leer <b>data/content.json</b>. Ábrelo desde la dirección de la web (no como archivo suelto) y recarga la página.</p>');

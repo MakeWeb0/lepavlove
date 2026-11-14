@@ -55,7 +55,8 @@
       <nav class="nav" id="nav" aria-label="Secciones de la web"></nav>
       <div class="side__foot">
         <a href="index.html" target="_blank" rel="noopener">Abrir la web ↗</a>
-        <button type="button" id="btnConn">GitHub: sin conectar</button>
+        <button type="button" id="btnConn">Entrar</button>
+        <button type="button" id="btnTech" class="side__tech">Ajustes técnicos</button>
       </div>
     </aside>
 
@@ -95,6 +96,17 @@
   </div>
 
   <div class="scrim" id="scrim" hidden></div>
+  <div class="gate" id="gate" hidden>
+    <form class="gate__box" id="gateForm">
+      <svg class="gate__logo" role="img" aria-label="Le Pavlove Patisserie"><use href="#logo"/></svg>
+      <h1>Panel de <em>la web.</em></h1>
+      <p>Escribe tu contraseña para editar la web.</p>
+      <label class="fld"><span>Contraseña</span><input type="password" id="gatePass" autocomplete="current-password" required></label>
+      <label class="sw"><input type="checkbox" id="gateRemember" checked><i></i><span>Recordarme en este dispositivo<small>Desmárcalo si el ordenador no es tuyo.</small></span></label>
+      <p class="gate__err" id="gateErr" role="alert" hidden></p>
+      <button type="submit" class="btn btn--royal">Entrar</button>
+    </form>
+  </div>
   <div class="modal" id="modal" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <script src="js/admin.js"></script>
